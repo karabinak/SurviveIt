@@ -38,7 +38,14 @@ void ASurvivalController::OnMoveTriggered(const FInputActionValue& Value)
 	if (PlayerCharacter)
 	{
 		const FVector2D MoveValue = Value.Get<FVector2D>();
-		PlayerCharacter->AddMovementInput(FVector(MoveValue.X, MoveValue.Y, 0.f));
+
+		const FRotator YawRotationX(0.f, GetControlRotation().Yaw, 0.f);
+		const FVector DirectionX(FRotationMatrix(YawRotationX).GetUnitAxis(EAxis::X));
+		PlayerCharacter->AddMovementInput(DirectionX, MoveValue.X);
+
+		const FRotator YawRotationY(0.f, GetControlRotation().Yaw, 0.f);
+		const FVector DirectionY(FRotationMatrix(YawRotationY).GetUnitAxis(EAxis::Y));
+		PlayerCharacter->AddMovementInput(DirectionY, MoveValue.Y);
 	}
 }
 
@@ -52,5 +59,9 @@ void ASurvivalController::OnLookAroundTriggered(const FInputActionValue& Value)
 
 void ASurvivalController::OnJumpTriggered(const FInputActionValue& Value)
 {
-
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+	if (PlayerCharacter)
+	{
+		PlayerCharacter->Jump();
+	}
 }

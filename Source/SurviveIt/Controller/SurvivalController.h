@@ -24,8 +24,11 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
+	UFUNCTION()
 	void OnMoveTriggered(const FInputActionValue& Value);
+	UFUNCTION()
 	void OnJumpTriggered(const FInputActionValue& Value);
+	UFUNCTION()
 	void OnLookAroundTriggered(const FInputActionValue& Value);
 
 private:
