@@ -7,11 +7,9 @@ APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 
-	SpringArm->SetupAttachment(GetMesh());
-	Camera->SetupAttachment(SpringArm);
+	Camera->SetupAttachment(GetMesh(), FName(TEXT("head")));
 }
 
 void APlayerCharacter::BeginPlay()
