@@ -22,4 +22,14 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	FHitResult HitResult;
+	FVector EndLocation = Camera->GetComponentLocation() + Camera->GetForwardVector() * 500.f;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this);
+	GetWorld()->LineTraceSingleByChannel(HitResult, Camera->GetComponentLocation(), EndLocation, ECollisionChannel::ECC_Visibility, CollisionParams);
+	//DrawDebugLine(GetWorld(), Camera->GetComponentLocation(), EndLocation, FColor::Red);
+	if (HitResult.GetActor())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Name: %s"), *HitResult.GetActor()->GetName());
+	}
 }

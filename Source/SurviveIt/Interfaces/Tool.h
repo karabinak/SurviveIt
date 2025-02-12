@@ -3,10 +3,10 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "HarvestTool.generated.h"
+#include "Tool.generated.h"
 
 UINTERFACE(MinimalAPI)
-class UHarvestTool : public UInterface
+class UTool : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -14,7 +14,7 @@ class UHarvestTool : public UInterface
 /**
  * 
  */
-class SURVIVEIT_API IHarvestTool
+class SURVIVEIT_API ITool
 {
 	GENERATED_BODY()
 

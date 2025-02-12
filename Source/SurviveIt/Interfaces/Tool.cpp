@@ -1,8 +1,8 @@
 
 
-#include "HarvestTool.h"
+#include "Tool.h"
 
-bool IHarvestTool::TestFunction()
+bool ITool::TestFunction()
 {
 	UE_LOG(LogTemp, Warning, TEXT("HarvestTool works"));
 	return false;
