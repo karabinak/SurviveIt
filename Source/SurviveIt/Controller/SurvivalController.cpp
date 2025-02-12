@@ -29,6 +29,8 @@ void ASurvivalController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(MoveInput, ETriggerEvent::Triggered, this, &ThisClass::OnMoveTriggered);
 		EnhancedInputComponent->BindAction(LookAroundInput, ETriggerEvent::Triggered, this, &ThisClass::OnLookAroundTriggered);
 		EnhancedInputComponent->BindAction(JumpInput, ETriggerEvent::Started, this, &ThisClass::OnJumpTriggered);
+		EnhancedInputComponent->BindAction(Interact, ETriggerEvent::Started, this, &ThisClass::OnInteractTriggered);
+		EnhancedInputComponent->BindAction(Inventory, ETriggerEvent::Started, this, &ThisClass::OnInventoryTriggered);
 	}
 }
 
@@ -63,5 +65,23 @@ void ASurvivalController::OnJumpTriggered(const FInputActionValue& Value)
 	if (PlayerCharacter)
 	{
 		PlayerCharacter->Jump();
+	}
+}
+
+void ASurvivalController::OnInteractTriggered(const FInputActionValue& Value)
+{
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+	if (PlayerCharacter)
+	{
+		PlayerCharacter->OnInteractionTriggered();
+	}
+}
+
+void ASurvivalController::OnInventoryTriggered(const FInputActionValue& Value)
+{
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+	if (PlayerCharacter)
+	{
+		PlayerCharacter->OnInventoryTriggered();
 	}
 }

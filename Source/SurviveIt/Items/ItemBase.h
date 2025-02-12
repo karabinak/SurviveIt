@@ -1,13 +1,11 @@
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "SurviveIt/Interfaces/Tool.h"
+#include "SurviveIt/Data/ItemData.h"
 #include "ItemBase.generated.h"
 
-
-//class UStaticMeshComponent;
+class UBoxComponent;
 
 UCLASS()
 class SURVIVEIT_API AItemBase : public AActor
@@ -25,7 +23,19 @@ protected:
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
+	UBoxComponent* BoxComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* ItemMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
+	EItemType ItemType = EItemType::EIT_Tool;
+
+	UPROPERTY(EditAnywhere, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
+	int32 SlotWidth = 1;
+
+	UPROPERTY(EditAnywhere, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
+	int32 SlotHeight = 1;
 
 
 public:	

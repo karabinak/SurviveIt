@@ -2,12 +2,19 @@
 
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Blueprint/UserWidget.h"
+
+#include "SurviveIt/Components/Inventory.h"
+#include "SurviveIt/Interfaces/Tool.h"
+#include "SurviveIt/Widgets/InventoryWidget.h"
+#include "SurviveIt/Items/ItemBase.h"
 
 APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	Inventory = CreateDefaultSubobject<UInventory>(TEXT("InventoryComponent"));
 
 	Camera->SetupAttachment(GetMesh(), FName(TEXT("head")));
 }
@@ -27,9 +34,52 @@ void APlayerCharacter::Tick(float DeltaTime)
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this);
 	GetWorld()->LineTraceSingleByChannel(HitResult, Camera->GetComponentLocation(), EndLocation, ECollisionChannel::ECC_Visibility, CollisionParams);
-	//DrawDebugLine(GetWorld(), Camera->GetComponentLocation(), EndLocation, FColor::Red);
-	if (HitResult.GetActor())
+	DrawDebugLine(GetWorld(), Camera->GetComponentLocation(), EndLocation, FColor::Red);
+
+	if (HitResult.GetActor() && Cast<AItemBase>(HitResult.GetActor()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Name: %s"), *HitResult.GetActor()->GetName());
+		HitActor = HitResult.GetActor();
+		//if (ITool* Tool = Cast<ITool>(HitResult.GetActor()))
+		//{
+		//	GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("HarvestLevel: %i"), Tool->GetHarvestLevel()));
+		//}
+	}
+	else
+	{
+		HitActor = nullptr;
+	}
+}
+
+void APlayerCharacter::OnInteractionTriggered()
+{
+	if (HitActor)
+	{
+		//if (HitActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "RightWeaponSocket"))
+		//{
+		//	HitActor->SetActorEnableCollision(false);
+		//	UE_LOG(LogTemp, Warning, TEXT("Attached"));
+		//}
+		//else
+		//{
+		//	UE_LOG(LogTemp, Warning, TEXT("NotAttached"));
+		//}
+	}
+}
+
+void APlayerCharacter::OnInventoryTriggered()
+{
+	if (bInventoryOnScreen)
+	{
+		InventoryWidget->RemoveFromParent();
+		bInventoryOnScreen = false;
+	}
+	else
+	{
+		bInventoryOnScreen = true;
+		if (InventoryWidgetClass)
+		{
+			InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
+			InventoryWidget->AddToViewport();
+		}
 	}
 }
