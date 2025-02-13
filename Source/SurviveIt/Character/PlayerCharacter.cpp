@@ -8,6 +8,7 @@
 #include "SurviveIt/Interfaces/Tool.h"
 #include "SurviveIt/Widgets/InventoryWidget.h"
 #include "SurviveIt/Items/ItemBase.h"
+#include "SurviveIt/Controller/SurvivalController.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -30,7 +31,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FHitResult HitResult;
-	FVector EndLocation = Camera->GetComponentLocation() + Camera->GetForwardVector() * 500.f;
+	FVector EndLocation = Camera->GetComponentLocation() + Camera->GetForwardVector() * InteractionLength;
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this);
 	GetWorld()->LineTraceSingleByChannel(HitResult, Camera->GetComponentLocation(), EndLocation, ECollisionChannel::ECC_Visibility, CollisionParams);
@@ -38,9 +39,9 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	if (HitResult.GetActor() && Cast<AItemBase>(HitResult.GetActor()))
 	{
-		HitActor = HitResult.GetActor();
+		HitActor = Cast<AItemBase>(HitResult.GetActor());
 
-		GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("HarvestLevel: %s"), *HitActor->GetName()));
+		GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("ItemName: %s"), *HitActor->GetName()));
 		//if (ITool* Tool = Cast<ITool>(HitResult.GetActor()))
 		//{
 		//	GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("HarvestLevel: %i"), Tool->GetHarvestLevel()));
@@ -49,7 +50,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	else
 	{
 		HitActor = nullptr;
-		GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("HarvestLevel: nullptr")));
+		GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("ItemName: nullptr")));
 	}
 }
 
@@ -57,7 +58,10 @@ void APlayerCharacter::OnInteractionTriggered()
 {
 	if (HitActor)
 	{
-		Inventory->AddToInventory(Cast<AItemBase>(HitActor));
+		if (Inventory->AddToInventory(HitActor))
+		{
+			HitActor->Destroy();
+		}
 
 		//AItemBase* Item = Cast<AItemBase>(HitActor);
 		//if (!Item) return;
@@ -85,18 +89,8 @@ void APlayerCharacter::OnInteractionTriggered()
 
 void APlayerCharacter::OnInventoryTriggered()
 {
-	//if (bInventoryOnScreen)
-	//{
-	//	InventoryWidget->RemoveFromParent();
-	//	bInventoryOnScreen = false;
-	//}
-	//else
-	//{
-	//	bInventoryOnScreen = true;
-	//	if (InventoryWidgetClass)
-	//	{
-	//		InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
-	//		InventoryWidget->AddToViewport();
-	//	}
-	//}
+	if (Inventory->IsInventoryWidgetVisible())
+	{
+		// SETUP CONTROLLS
+	}
 }

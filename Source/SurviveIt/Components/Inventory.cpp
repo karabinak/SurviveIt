@@ -32,6 +32,7 @@ void UInventory::BeginPlay()
 	{
 		InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
 		InventoryWidget->InitializeGrid(SlotSize, InventoryRows, InventoryColumns);
+		InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
 		InventoryWidget->AddToViewport();
 	}
 }
@@ -42,23 +43,22 @@ bool UInventory::AddToInventory(AItemBase* Item)
 	{
 		for (int Column = 0; InventoryColumns > Column; Column++)
 		{
+			// Conditions to Continue loop
 			if (InventorySlots[(Row)*InventoryColumns + Column].Item != nullptr) continue;
 			if (InventoryColumns - 1 < Column + Item->GetItemWidth() - 1 || InventoryRows - 1 < Row + Item->GetItemHeight() - 1) continue;
-			
-			if (ItemCanFit(Row, Column, Item))
+		
+			if (ItemCanFit(Row, Column, Item)) // Checking if the item will fit
 			{
 				for (int Width = 0; Item->GetItemWidth() > Width; Width++)
 				{
 					for (int Height = 0; Item->GetItemHeight() > Height; Height++)
 					{
-						InventorySlots[(Row + Height) * InventoryColumns + Column + Width].Item = Item;
+						InventorySlots[(Row + Height) * InventoryColumns + Column + Width].Item = Item; // Adding items to Inventory
 					}
 				}
 				if (InventoryWidget)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("R %i, C %i"), Row, Column);
-					FVector2D FirstTile = FVector2D(Row, Column);
-					InventoryWidget->AddItemToWidget(FirstTile, SlotSize, Item);
+					InventoryWidget->AddItemToWidget(FVector2D(Row, Column), SlotSize, Item); // Adding items to Widget inventory
 				}
 				return true;
 			}
@@ -82,4 +82,19 @@ bool UInventory::ItemCanFit(int32 Row, int32 Column, AItemBase* Item)
 	return true;
 }
 
-
+bool UInventory::IsInventoryWidgetVisible()
+{
+	if (!InventoryWidget) return false;
+	if (bInvnetoryVisible)
+	{
+		bInvnetoryVisible = false;
+		InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
+		return false;
+	}
+	else
+	{
+		bInvnetoryVisible = true;
+		InventoryWidget->SetVisibility(ESlateVisibility::Visible);
+		return true;
+	}
+}

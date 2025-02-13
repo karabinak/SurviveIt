@@ -39,6 +39,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Widget")
 	float SlotSize = 60.f;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Widget")
+	bool bInvnetoryVisible = false;
 
 
 public:	
@@ -46,6 +49,8 @@ public:
 	bool AddToInventory(AItemBase* Item);
 
 	bool ItemCanFit(int32 Row, int32 Column, AItemBase* Item);
+
+	bool IsInventoryWidgetVisible();
 
 		
 };

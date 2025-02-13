@@ -7,6 +7,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class UInventory;
+class AItemBase;
 //class UInventoryWidget;
 
 UCLASS()
@@ -32,11 +33,14 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* Camera;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+	float InteractionLength = 500.f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
 	UInventory* Inventory;
 
 	UPROPERTY(VisibleAnywhere, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
-	AActor* HitActor = nullptr;
+	AItemBase* HitActor = nullptr;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
 	//TSubclassOf<UUserWidget> InventoryWidgetClass;
