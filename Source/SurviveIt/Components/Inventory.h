@@ -6,6 +6,7 @@
 #include "SurviveIt/Data/ItemData.h"
 #include "Inventory.generated.h"
 
+class UInventoryWidget;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SURVIVEIT_API UInventory : public UActorComponent
@@ -26,13 +27,25 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	int32 InventoryColumns = 15;
+
 	UPROPERTY(EditAnywhere)
 	int32 InventoryRows = 5;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Widget")
+	TSubclassOf<UUserWidget> InventoryWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "Widget")
+	UInventoryWidget* InventoryWidget;
+
+	UPROPERTY(VisibleAnywhere, Category = "Widget")
+	float SlotSize = 60.f;
 
 
 public:	
 
-	bool AddToInventory(int32 Width, int32 Height, AItemBase* Item);
+	bool AddToInventory(AItemBase* Item);
+
+	bool ItemCanFit(int32 Row, int32 Column, AItemBase* Item);
 
 		
 };

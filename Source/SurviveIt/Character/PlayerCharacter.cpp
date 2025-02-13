@@ -39,6 +39,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 	if (HitResult.GetActor() && Cast<AItemBase>(HitResult.GetActor()))
 	{
 		HitActor = HitResult.GetActor();
+
+		GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("HarvestLevel: %s"), *HitActor->GetName()));
 		//if (ITool* Tool = Cast<ITool>(HitResult.GetActor()))
 		//{
 		//	GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("HarvestLevel: %i"), Tool->GetHarvestLevel()));
@@ -47,6 +49,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	else
 	{
 		HitActor = nullptr;
+		GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("HarvestLevel: nullptr")));
 	}
 }
 
@@ -54,6 +57,20 @@ void APlayerCharacter::OnInteractionTriggered()
 {
 	if (HitActor)
 	{
+		Inventory->AddToInventory(Cast<AItemBase>(HitActor));
+
+		//AItemBase* Item = Cast<AItemBase>(HitActor);
+		//if (!Item) return;
+
+		//if (Inventory->AddToInventory(Item->GetItemWidth(), Item->GetItemHeight(), Item))
+		//{
+		//	//Item->Destroy();
+		//}
+		//else
+		//{
+		//	UE_LOG(LogTemp, Warning, TEXT("NotAdded"));
+		//}
+
 		//if (HitActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "RightWeaponSocket"))
 		//{
 		//	HitActor->SetActorEnableCollision(false);
@@ -68,18 +85,18 @@ void APlayerCharacter::OnInteractionTriggered()
 
 void APlayerCharacter::OnInventoryTriggered()
 {
-	if (bInventoryOnScreen)
-	{
-		InventoryWidget->RemoveFromParent();
-		bInventoryOnScreen = false;
-	}
-	else
-	{
-		bInventoryOnScreen = true;
-		if (InventoryWidgetClass)
-		{
-			InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
-			InventoryWidget->AddToViewport();
-		}
-	}
+	//if (bInventoryOnScreen)
+	//{
+	//	InventoryWidget->RemoveFromParent();
+	//	bInventoryOnScreen = false;
+	//}
+	//else
+	//{
+	//	bInventoryOnScreen = true;
+	//	if (InventoryWidgetClass)
+	//	{
+	//		InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
+	//		InventoryWidget->AddToViewport();
+	//	}
+	//}
 }

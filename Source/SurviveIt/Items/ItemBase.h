@@ -6,6 +6,7 @@
 #include "ItemBase.generated.h"
 
 class UBoxComponent;
+class UImage;
 
 UCLASS()
 class SURVIVEIT_API AItemBase : public AActor
@@ -32,14 +33,21 @@ private:
 	EItemType ItemType = EItemType::EIT_Tool;
 
 	UPROPERTY(EditAnywhere, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
-	int32 SlotWidth = 1;
+	int32 ItemWidth = 1;
 
 	UPROPERTY(EditAnywhere, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
-	int32 SlotHeight = 1;
+	int32 ItemHeight = 1;
+
+	UPROPERTY(EditAnywhere, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
+	UImage* ItemIcon;
 
 
 public:	
 
+	FORCEINLINE int32 GetItemWidth() { return ItemWidth; }
+	FORCEINLINE int32 GetItemHeight() { return ItemHeight; }
+
+	FORCEINLINE UImage* GetItemIcon() { return ItemIcon; }
 
 
 };
