@@ -11,6 +11,7 @@ class UImage;
 class UCanvasPanel;
 class USizeBox;
 class UBorder;
+class UTextBlock;
 
 UCLASS()
 class SURVIVEIT_API UItemWidget : public UUserWidget
@@ -31,8 +32,13 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UImage* ItemIcon;
 
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* QuantityText;
+
 public:
 
 	void InitializeItemProperties(AItemBase* Item);
+
+	void UpdateProperties(AItemBase* Item);
 
 };

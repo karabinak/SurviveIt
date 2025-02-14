@@ -3,23 +3,29 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "SurviveIt/Data/ItemData.h"
+#include "SurviveIt/Interfaces/InventoryHandler.h"
 #include "ItemBase.generated.h"
 
 class UBoxComponent;
 class UImage;
+class UInventory;
+class UItemWidget;
 
 UCLASS()
 class SURVIVEIT_API AItemBase : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	AItemBase();
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual bool TryAddToInventory(IInventoryHandler* InventoryHandler) { return false; }
+
 protected:
 	virtual void BeginPlay() override;
+
 
 private:
 
@@ -42,12 +48,20 @@ private:
 	UImage* ItemIcon;
 
 
+	UPROPERTY(EditAnywhere, Category = "Widget", meta = (AllowPrivateAccess = "true"))
+	UItemWidget* ItemWidget;
+
+
 public:	
 
 	FORCEINLINE int32 GetItemWidth() { return ItemWidth; }
 	FORCEINLINE int32 GetItemHeight() { return ItemHeight; }
 
 	FORCEINLINE UImage* GetItemIcon() { return ItemIcon; }
+	FORCEINLINE EItemType GetItemType() { return ItemType; }
+
+	FORCEINLINE void SetItemWidget(UItemWidget* InItemWidget) { ItemWidget = InItemWidget; }
+	FORCEINLINE UItemWidget* GetItemWidget() { return ItemWidget; }
 
 
 };

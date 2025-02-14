@@ -5,7 +5,7 @@
 #include "Blueprint/UserWidget.h"
 
 #include "SurviveIt/Components/Inventory.h"
-#include "SurviveIt/Interfaces/Tool.h"
+//#include "SurviveIt/Interfaces/Tool.h"
 #include "SurviveIt/Widgets/InventoryWidget.h"
 #include "SurviveIt/Items/ItemBase.h"
 #include "SurviveIt/Controller/SurvivalController.h"
@@ -58,10 +58,12 @@ void APlayerCharacter::OnInteractionTriggered()
 {
 	if (HitActor)
 	{
-		if (Inventory->AddToInventory(HitActor))
-		{
-			HitActor->Destroy();
-		}
+		HitActor->TryAddToInventory(Inventory);
+
+
+
+
+
 
 		//AItemBase* Item = Cast<AItemBase>(HitActor);
 		//if (!Item) return;

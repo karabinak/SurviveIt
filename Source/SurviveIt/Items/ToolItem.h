@@ -18,6 +18,8 @@ public:
 	virtual int32 GetHarvestLevel() const override { return HarvestLevel; }
 
 	virtual EToolType GetToolType() const override { return ToolType; }
+
+	virtual bool TryAddToInventory(IInventoryHandler* InventoryHandler) override;
 private:
 
 	//UPROPERTY(EditAnywhere, Category = "Tool Properties", meta = (AllowPrivateAccess = "true"))
