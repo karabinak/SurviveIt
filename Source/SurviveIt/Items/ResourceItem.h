@@ -23,7 +23,7 @@ public:
 
 	void UpdateWidget();
 
-	void Initialize(EResourceType Type, int32 StartQuantity, int32 NewStackMax);
+	void Initialize(EResourceType Type, int32 StartQuantity, int32 NewStackMax, UTexture2D* NewItemIcon);
 
 private:
 

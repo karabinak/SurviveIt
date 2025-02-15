@@ -26,6 +26,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
+	UTexture2D* ItemIcon;
 
 private:
 
@@ -44,10 +46,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	int32 ItemHeight = 1;
 
-	UPROPERTY(EditAnywhere, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
-	UImage* ItemIcon;
-
-
 	UPROPERTY(EditAnywhere, Category = "Widget", meta = (AllowPrivateAccess = "true"))
 	UItemWidget* ItemWidget;
 
@@ -57,7 +55,7 @@ public:
 	FORCEINLINE int32 GetItemWidth() { return ItemWidth; }
 	FORCEINLINE int32 GetItemHeight() { return ItemHeight; }
 
-	FORCEINLINE UImage* GetItemIcon() { return ItemIcon; }
+	FORCEINLINE UTexture2D* GetItemIcon() { return ItemIcon; }
 	FORCEINLINE EItemType GetItemType() { return ItemType; }
 
 	FORCEINLINE void SetItemWidget(UItemWidget* InItemWidget) { ItemWidget = InItemWidget; }

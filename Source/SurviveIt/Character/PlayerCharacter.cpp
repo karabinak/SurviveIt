@@ -56,7 +56,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 void APlayerCharacter::OnInteractionTriggered()
 {
-	if (HitActor)
+	if (HitActor != nullptr)
 	{
 		HitActor->TryAddToInventory(Inventory);
 

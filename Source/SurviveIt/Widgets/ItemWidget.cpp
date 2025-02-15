@@ -1,15 +1,17 @@
 
 #include "ItemWidget.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
 
 #include "SurviveIt/Items/ItemBase.h"
 #include "SurviveIt/Items/ResourceItem.h"
+
 
 void UItemWidget::InitializeItemProperties(AItemBase* Item)
 {
 	if (Item)
 	{
-		ItemIcon = Item->GetItemIcon();
+		ItemIcon->SetBrushFromTexture(Item->GetItemIcon());
 		if (AResourceItem* ResourceItem = Cast<AResourceItem>(Item))
 		{
 			QuantityText->SetText(FText::FromString(FString::Printf(TEXT("%i"), ResourceItem->GetResourceQuantity())));
@@ -22,5 +24,6 @@ void UItemWidget::UpdateProperties(AItemBase* Item)
 	if (AResourceItem* ResourceItem = Cast<AResourceItem>(Item))
 	{
 		QuantityText->SetText(FText::FromString(FString::Printf(TEXT("%i"), ResourceItem->GetResourceQuantity())));
+		ItemIcon->SetBrushFromTexture(Item->GetItemIcon());
 	}
 }

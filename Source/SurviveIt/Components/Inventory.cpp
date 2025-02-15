@@ -107,7 +107,7 @@ bool UInventory::AddResourceToInventory(AResourceItem* ResourceItem)
 			else
 			{
 				NewStack = NewObject<AResourceItem>(ResourceItem->GetClass());
-				NewStack->Initialize(ResourceType, QuantityToAdd, MaxStack);
+				NewStack->Initialize(ResourceType, QuantityToAdd, MaxStack, ResourceItem->GetItemIcon());
 			}
 			AddNewStack(NewStack);
 
