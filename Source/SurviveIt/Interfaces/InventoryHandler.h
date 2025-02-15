@@ -22,6 +22,6 @@ class SURVIVEIT_API IInventoryHandler
 
 public:
 
-	virtual bool AddToolToInventory(class AToolItem* Tool) = 0;
-	virtual bool AddResourceToInventory(class AResourceItem* Resource) = 0;
+	virtual bool AddToolToInventory(class AToolItem* ToolItem) = 0;
+	virtual bool AddResourceToInventory(class AResourceItem* ResourceItem) = 0;
 };

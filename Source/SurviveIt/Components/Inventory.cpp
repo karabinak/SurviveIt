@@ -13,7 +13,6 @@ UInventory::UInventory()
 
 }
 
-
 void UInventory::BeginPlay()
 {
 	Super::BeginPlay();
@@ -39,20 +38,21 @@ void UInventory::BeginPlay()
 	}
 }
 
-bool UInventory::AddToolToInventory(AToolItem* Tool)
+bool UInventory::AddToolToInventory(AToolItem* ToolItem)
 {
 	for (int Row = 0; InventoryRows > Row; Row++)
 	{
 		for (int Column = 0; InventoryColumns > Column; Column++)
 		{
 			if (InventorySlots[(Row) * InventoryColumns + Column].Item != nullptr) continue; // Checking if slot is occupied.
-			if (InventoryColumns - 1 < Column + Tool->GetItemWidth() - 1 || InventoryRows - 1 < Row + Tool->GetItemHeight() - 1) continue; // Checking if Item size is not out of bonds.
+			if (InventoryColumns - 1 < Column + ToolItem->GetItemWidth() - 1 || InventoryRows - 1 < Row + ToolItem->GetItemHeight() - 1) continue; // Checking if Item size is not out of bonds.
 
 			FIntPoint Position = FIntPoint(Row, Column);
-			FIntPoint ItemSize = FIntPoint(Tool->GetItemWidth(), Tool->GetItemHeight());
+			FIntPoint ItemSize = FIntPoint(ToolItem->GetItemWidth(), ToolItem->GetItemHeight());
+
 			if (CheckSpaceAvailable(Position, ItemSize))
 			{
-				OccupySlots(Position, ItemSize, Tool);
+				OccupySlots(Position, ItemSize, ToolItem);
 				return true;
 			}
 		}
@@ -60,75 +60,81 @@ bool UInventory::AddToolToInventory(AToolItem* Tool)
 	return false;
 }
 
-bool UInventory::AddResourceToInventory(AResourceItem* Resource)
+bool UInventory::AddResourceToInventory(AResourceItem* ResourceItem)
 {
-	if (ResourceMap.Contains(Resource->GetResourceType()))
+	if (!ResourceItem) return false;
+
+	const EResourceType ResourceType = ResourceItem->GetResourceType();
+	int32 RemainingQuantity = ResourceItem->GetResourceQuantity();
+	const int32 MaxStack = ResourceItem->GetMaxStack();
+
+	while (RemainingQuantity > 0)
 	{
-		for (AResourceItem* ExistingItem : ResourceMap[Resource->GetResourceType()].Items)
+		int32 QuantityToAdd = FMath::Min(RemainingQuantity, MaxStack);
+		RemainingQuantity -= QuantityToAdd;
+
+		bool bAddedToExisting = false;
+
+		/** Adding to Existing ResourceMap */
+		if (ResourceMap.Contains(ResourceType))
 		{
-			if (ExistingItem->CanAddQuantity(Resource->GetResourceQuantity())) 
+			for (AResourceItem* ExistingItem : ResourceMap[ResourceType].Items)
 			{
-				if(int32 Quantity = ExistingItem->AddQuantity(Resource->GetResourceQuantity())) // If 0 false
+				UE_LOG(LogTemp, Warning, TEXT("Amount: %i"), ExistingItem->GetResourceQuantity());
+				if (ExistingItem->CanAddQuantity(QuantityToAdd))
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Reszta: %i"), Quantity);
-					ResourceMap[Resource->GetResourceType()].Items.Add(Resource);
-					continue;
+					ExistingItem->AddQuantity(QuantityToAdd);
+					bAddedToExisting = true;
+					break;
 				}
-				else
+				else 
 				{
-					return true;
+					QuantityToAdd -= (ExistingItem->GetMaxStack() - ExistingItem->GetResourceQuantity());
+					ExistingItem->AddQuantity(MaxStack);
 				}
 			}
 		}
-	}
-	else
-	{
-		// ------------------------------------------------------------------
-
-		for (int Row = 0; InventoryRows > Row; Row++)
-		{
-			for (int Column = 0; InventoryColumns > Column; Column++)
-			{
-				if (InventorySlots[(Row) * InventoryColumns + Column].Item != nullptr) continue; // Checking if slot is occupied.
-
-				FIntPoint Position = FIntPoint(Row, Column);
-				FIntPoint ItemSize = FIntPoint(Resource->GetItemWidth(), Resource->GetItemHeight());
-				if (CheckSpaceAvailable(Position, ItemSize))
-				{
-					ResourceMap.Add(Resource->GetResourceType(), FResourceItemArray());
-					ResourceMap[Resource->GetResourceType()].Items.Add(Resource);
-					OccupySlots(Position, ItemSize, Resource);
-					return true;
-				}
-			}
-		}
-	}
-	return false;
-}
-
-bool UInventory::AddToInventory(AItemBase* Item)
-{
-	for (int Row = 0; InventoryRows > Row; Row++)
-	{
-		for (int Column = 0; InventoryColumns > Column; Column++)
-		{
-			// Conditions to Continue loop
-			if (InventorySlots[(Row)*InventoryColumns + Column].Item != nullptr) continue;
-			if (InventoryColumns - 1 < Column + Item->GetItemWidth() - 1 || InventoryRows - 1 < Row + Item->GetItemHeight() - 1) continue;
 		
-			if (ItemCanFit(Row, Column, Item)) // Checking if the item will fit
+		if (!bAddedToExisting) 
+		{ 
+			AResourceItem* NewStack = nullptr;
+
+			if (QuantityToAdd == ResourceItem->GetResourceQuantity()) /** If first Iteration use ResourceItem */
 			{
-				for (int Width = 0; Item->GetItemWidth() > Width; Width++)
-				{
-					for (int Height = 0; Item->GetItemHeight() > Height; Height++)
-					{
-						InventorySlots[(Row + Height) * InventoryColumns + Column + Width].Item = Item; // Adding items to Inventory
-					}
-				}
-				if (InventoryWidget)
-				{
-					InventoryWidget->AddItemToWidget(FVector2D(Row, Column), SlotSize, Item); // Adding items to Widget inventory
-				}
+				NewStack = ResourceItem;
+				NewStack->SetResourceQuantity(QuantityToAdd);
+			}
+			else
+			{
+				NewStack = NewObject<AResourceItem>(ResourceItem->GetClass());
+				NewStack->Initialize(ResourceType, QuantityToAdd, MaxStack);
+			}
+			AddNewStack(NewStack);
+
+			if (!ResourceMap.Contains(ResourceType))
+			{
+				ResourceMap.Add(ResourceType, FResourceItemArray());
+			}
+			ResourceMap[ResourceType].Items.Add(NewStack);
+		}
+	}
+	ResourceItem->Destroy();
+	return true;
+}
+
+bool UInventory::AddNewStack(AResourceItem* Resource)
+{
+	for (int Row = 0; InventoryRows > Row; Row++)
+	{
+		for (int Column = 0; InventoryColumns > Column; Column++)
+		{
+			if (InventorySlots[(Row)*InventoryColumns + Column].Item != nullptr) continue; // Checking if slot is occupied.
+
+			FIntPoint Position = FIntPoint(Row, Column);
+			FIntPoint ItemSize = FIntPoint(Resource->GetItemWidth(), Resource->GetItemHeight());
+			if (CheckSpaceAvailable(Position, ItemSize))
+			{
+				OccupySlots(Position, ItemSize, Resource);
 				return true;
 			}
 		}
@@ -136,30 +142,60 @@ bool UInventory::AddToInventory(AItemBase* Item)
 	return false;
 }
 
-bool UInventory::AddToInventoryWithQuantiy(AItemBase* Item)
-{
-	for (int Row = 0; InventoryRows > Row; Row++)
-	{
-		for (int Column = 0; InventoryColumns > Column; Column++)
-		{
-			if (InventorySlots[(Row)*InventoryColumns + Column].Item != nullptr) continue;
-
-			for (int Width = 0; Item->GetItemWidth() > Width; Width++)
-			{
-				for (int Height = 0; Item->GetItemHeight() > Height; Height++)
-				{
-					InventorySlots[(Row + Height) * InventoryColumns + Column + Width].Item = Item; // Adding items to Inventory
-				}
-			}
-			if (InventoryWidget)
-			{
-				InventoryWidget->AddItemToWidget(FVector2D(Row, Column), SlotSize, Item); // Adding items to Widget inventory
-			}
-			return true;
-		}
-	}
-	return false;
-}
+//bool UInventory::AddToInventory(AItemBase* Item)
+//{
+//	for (int Row = 0; InventoryRows > Row; Row++)
+//	{
+//		for (int Column = 0; InventoryColumns > Column; Column++)
+//		{
+//			// Conditions to Continue loop
+//			if (InventorySlots[(Row)*InventoryColumns + Column].Item != nullptr) continue;
+//			if (InventoryColumns - 1 < Column + Item->GetItemWidth() - 1 || InventoryRows - 1 < Row + Item->GetItemHeight() - 1) continue;
+//		
+//			if (ItemCanFit(Row, Column, Item)) // Checking if the item will fit
+//			{
+//				for (int Width = 0; Item->GetItemWidth() > Width; Width++)
+//				{
+//					for (int Height = 0; Item->GetItemHeight() > Height; Height++)
+//					{
+//						InventorySlots[(Row + Height) * InventoryColumns + Column + Width].Item = Item; // Adding items to Inventory
+//					}
+//				}
+//				if (InventoryWidget)
+//				{
+//					InventoryWidget->AddItemToWidget(FVector2D(Row, Column), SlotSize, Item); // Adding items to Widget inventory
+//				}
+//				return true;
+//			}
+//		}
+//	}
+//	return false;
+//}
+//
+//bool UInventory::AddToInventoryWithQuantiy(AItemBase* Item)
+//{
+//	for (int Row = 0; InventoryRows > Row; Row++)
+//	{
+//		for (int Column = 0; InventoryColumns > Column; Column++)
+//		{
+//			if (InventorySlots[(Row)*InventoryColumns + Column].Item != nullptr) continue;
+//
+//			for (int Width = 0; Item->GetItemWidth() > Width; Width++)
+//			{
+//				for (int Height = 0; Item->GetItemHeight() > Height; Height++)
+//				{
+//					InventorySlots[(Row + Height) * InventoryColumns + Column + Width].Item = Item; // Adding items to Inventory
+//				}
+//			}
+//			if (InventoryWidget)
+//			{
+//				InventoryWidget->AddItemToWidget(FVector2D(Row, Column), SlotSize, Item); // Adding items to Widget inventory
+//			}
+//			return true;
+//		}
+//	}
+//	return false;
+//}
 
 bool UInventory::ItemCanFit(int32 Row, int32 Column, AItemBase* Item)
 {

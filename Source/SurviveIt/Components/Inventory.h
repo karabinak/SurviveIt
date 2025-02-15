@@ -10,6 +10,7 @@
 class UInventoryWidget;
 class AToolItem;
 class AResourceItem;
+class AItemBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SURVIVEIT_API UInventory : public UActorComponent, public IInventoryHandler
@@ -22,7 +23,7 @@ public:
 	bool AddToolToInventory(AToolItem* Tool);
 	bool AddResourceToInventory(AResourceItem* Resource);
 
-
+	bool AddNewStack(AResourceItem* Resource);
 
 protected:
 	virtual void BeginPlay() override;
@@ -31,6 +32,7 @@ protected:
 	bool CheckSpaceAvailable(const FIntPoint& Position, const FIntPoint& ItemSize);
 	UFUNCTION()
 	void OccupySlots(const FIntPoint& Position, const FIntPoint& ItemSize, AItemBase* Item);
+	UFUNCTION()
 	void FreeSlots(AItemBase* Item);
 
 private:
@@ -62,8 +64,8 @@ private:
 
 public:	
 
-	bool AddToInventory(AItemBase* Item);
-	bool AddToInventoryWithQuantiy(AItemBase* Item);
+	//bool AddToInventory(AItemBase* Item);
+	//bool AddToInventoryWithQuantiy(AItemBase* Item);
 
 	bool ItemCanFit(int32 Row, int32 Column, AItemBase* Item);
 

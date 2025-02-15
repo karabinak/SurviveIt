@@ -6,9 +6,5 @@
 
 bool AToolItem::TryAddToInventory(IInventoryHandler* InventoryHandler)
 {
-    if (InventoryHandler->AddToolToInventory(this))
-    {
-        return true;
-    }
-    return false;
+    return InventoryHandler->AddToolToInventory(this) ? true : false;
 }

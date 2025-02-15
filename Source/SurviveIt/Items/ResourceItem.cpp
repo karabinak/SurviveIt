@@ -7,33 +7,29 @@
 
 bool AResourceItem::TryAddToInventory(IInventoryHandler* InventoryHandler)
 {
-	if (InventoryHandler->AddResourceToInventory(this))
-	{
-		return true;
-	}
-	return false;
+	return (InventoryHandler->AddResourceToInventory(this)) ? true : false;
 }
 
-bool AResourceItem::CanAddQuantity(int32 InQuantity)
+bool AResourceItem::CanAddQuantity(int32 Amount) const
 {
-	if (Quantity >= MaxStack)
-	{
-		return false;
-	}
-	return true;
+	return (Quantity + Amount) <= MaxStack;
 }
 
-int32 AResourceItem::AddQuantity(int32 InQuantity)
+void AResourceItem::AddQuantity(int32 Amount)
 {
-	if (Quantity + InQuantity <= MaxStack)
-	{
-		Quantity += InQuantity;
-		return 0;
-	}
-	Quantity = MaxStack;
-	if (GetItemWidget())
-	{
-		GetItemWidget()->UpdateProperties(this);
-	}
-	return Quantity + InQuantity - MaxStack;
+	Quantity = FMath::Clamp(Quantity + Amount, 0, MaxStack);
+	UpdateWidget();
+}
+
+void AResourceItem::UpdateWidget()
+{
+	if (!GetItemWidget()) return;
+	GetItemWidget()->UpdateProperties(this);
+}
+
+void AResourceItem::Initialize(EResourceType Type, int32 StartQuantity, int32 NewStackMax)
+{
+	ResourceType = Type;
+	Quantity = StartQuantity;
+	MaxStack = NewStackMax;
 }

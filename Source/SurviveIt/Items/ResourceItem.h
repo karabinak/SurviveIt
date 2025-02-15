@@ -18,8 +18,12 @@ public:
 
 	virtual bool TryAddToInventory(IInventoryHandler* InventoryHandler) override;
 
-	bool CanAddQuantity(int32 InQuantity);
-	int32 AddQuantity(int32 InQuantity);
+	bool CanAddQuantity(int32 Amount) const;
+	void AddQuantity(int32 Amount);
+
+	void UpdateWidget();
+
+	void Initialize(EResourceType Type, int32 StartQuantity, int32 NewStackMax);
 
 private:
 
@@ -38,4 +42,5 @@ public:
 	FORCEINLINE int32 GetResourceQuantity() { return Quantity; }
 	FORCEINLINE void SetResourceQuantity(int32 InQuantity) { Quantity = InQuantity; }
 	FORCEINLINE int32 GetMaxStack() { return MaxStack; }
+
 };
