@@ -20,11 +20,13 @@ public:
 	virtual EToolType GetToolType() const override { return ToolType; }
 
 	virtual bool TryAddToInventory(IInventoryHandler* InventoryHandler) override;
+
+protected:
+
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
 private:
-
-	//UPROPERTY(EditAnywhere, Category = "Tool Properties", meta = (AllowPrivateAccess = "true"))
-	//EHarvestLevel HarvestLevel = EHarvestLevel::EHL_Wooden;
-
 
 	/** 0 - Wooden; 1 - Stone; 2 - Iron; ... */
 	UPROPERTY(EditAnywhere, Category = "Tool Properties", meta = (AllowPrivateAccess = "true"))

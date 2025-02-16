@@ -12,14 +12,17 @@ class UBreakableResource : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
+
 class SURVIVEIT_API IBreakableResource
 {
 	GENERATED_BODY()
 
 public:
 
-	bool TestFunction();
+	UFUNCTION()
+	virtual int32 GetRequiredHarvestLevel() const = 0;
+	UFUNCTION()
+	virtual EToolType GetRequiredToolType() const = 0;
+	UFUNCTION()
+	virtual void OnResourceDestroyed(AActor* BreakingActor) = 0;
 };
