@@ -11,6 +11,12 @@ AHarvestable::AHarvestable()
 	SetRootComponent(HarvestableMesh);
 }
 
+void AHarvestable::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+
 void AHarvestable::OnResourceDestroyed(AActor* BreakingActor)
 {
 	Destroy();
