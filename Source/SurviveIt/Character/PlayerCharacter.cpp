@@ -8,7 +8,7 @@
 //#include "SurviveIt/Interfaces/Tool.h"
 #include "SurviveIt/Widgets/InventoryWidget.h"
 #include "SurviveIt/Items/ItemBase.h"
-#include "SurviveIt/Controller/SurvivalController.h"
+//#include "SurviveIt/Controller/SurvivalController.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -60,11 +60,6 @@ void APlayerCharacter::OnInteractionTriggered()
 	{
 		HitActor->TryAddToInventory(Inventory);
 
-
-
-
-
-
 		//AItemBase* Item = Cast<AItemBase>(HitActor);
 		//if (!Item) return;
 
@@ -89,10 +84,8 @@ void APlayerCharacter::OnInteractionTriggered()
 	}
 }
 
-void APlayerCharacter::OnInventoryTriggered()
+bool APlayerCharacter::IsInventoryVisible()
 {
-	if (Inventory->IsInventoryWidgetVisible())
-	{
-		// SETUP CONTROLLS
-	}
+	if (Inventory->IsInventoryWidgetVisible()) return true;
+	return false;
 }

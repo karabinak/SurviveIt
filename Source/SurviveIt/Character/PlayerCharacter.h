@@ -22,7 +22,7 @@ public:
 
 	void OnInteractionTriggered();
 
-	void OnInventoryTriggered();
+	bool IsInventoryVisible();
 
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

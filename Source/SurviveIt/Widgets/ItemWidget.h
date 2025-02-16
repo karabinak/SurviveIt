@@ -18,6 +18,11 @@ class SURVIVEIT_API UItemWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+protected:
+
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent);
+
 private:
 
 	UPROPERTY(meta = (BindWidget))

@@ -82,6 +82,18 @@ void ASurvivalController::OnInventoryTriggered(const FInputActionValue& Value)
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 	if (PlayerCharacter)
 	{
-		PlayerCharacter->OnInventoryTriggered();
+		if (PlayerCharacter->IsInventoryVisible())
+		{
+			bShowMouseCursor = true;
+			FInputModeGameAndUI GameAndUI;
+			SetInputMode(GameAndUI);
+			/* STOP MOVEMENT */
+		}
+		else
+		{
+			bShowMouseCursor = false;
+			FInputModeGameOnly GameOnly;
+			SetInputMode(GameOnly);
+		}
 	}
 }
