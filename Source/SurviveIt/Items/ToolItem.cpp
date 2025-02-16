@@ -5,6 +5,11 @@
 #include "SurviveIt/Interfaces/InventoryHandler.h"
 #include "SurviveIt/Interfaces/BreakableResource.h"
 
+AToolItem::AToolItem()
+{
+    ItemMesh->OnComponentHit.AddDynamic(this, &AToolItem::OnHit);
+}
+
 bool AToolItem::TryAddToInventory(IInventoryHandler* InventoryHandler)
 {
     return InventoryHandler->AddToolToInventory(this) ? true : false;
@@ -12,18 +17,17 @@ bool AToolItem::TryAddToInventory(IInventoryHandler* InventoryHandler)
 
 void AToolItem::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-    if (OtherActor->Implements<IBreakableResource>())
+    if (OtherActor && OtherActor->GetClass()->ImplementsInterface(UBreakableResource::StaticClass()))
     {
         IBreakableResource* Breakable = Cast<IBreakableResource>(OtherActor);
-        ITool* Tool = Cast<ITool>(GetOwner());
 
         const bool bCanMine = 
-            (Tool->GetHarvestLevel() >= Breakable->GetRequiredHarvestLevel()) && 
-            (Tool->GetToolType() == Breakable->GetRequiredToolType());
+            (GetHarvestLevel() >= Breakable->GetRequiredHarvestLevel()) && 
+            (GetToolType() == Breakable->GetRequiredToolType());
 
         if (bCanMine)
         {
-            Breakable->OnResourceDestroyed(this);
+            Breakable->OnResourceDestroyed(GetOwner());
         }
     }
 }

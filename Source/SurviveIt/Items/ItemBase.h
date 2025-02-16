@@ -29,13 +29,13 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	UTexture2D* ItemIcon;
 
+	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* ItemMesh;
+
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* BoxComponent;
-
-	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* ItemMesh;
 
 	UPROPERTY(EditAnywhere, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	EItemType ItemType = EItemType::EIT_Tool;

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "SurviveIt/Data/ItemData.h"
 #include "BreakableResource.generated.h"
 
 UINTERFACE(MinimalAPI)
@@ -19,10 +20,7 @@ class SURVIVEIT_API IBreakableResource
 
 public:
 
-	UFUNCTION()
 	virtual int32 GetRequiredHarvestLevel() const = 0;
-	UFUNCTION()
 	virtual EToolType GetRequiredToolType() const = 0;
-	UFUNCTION()
 	virtual void OnResourceDestroyed(AActor* BreakingActor) = 0;
 };

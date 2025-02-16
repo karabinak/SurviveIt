@@ -7,10 +7,11 @@ AHarvestable::AHarvestable()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	HarvestableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	SetRootComponent(HarvestableMesh);
 }
 
-void AHarvestable::BeginPlay()
+void AHarvestable::OnResourceDestroyed(AActor* BreakingActor)
 {
-	Super::BeginPlay();
-	
+	Destroy();
 }

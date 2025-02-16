@@ -14,9 +14,10 @@ class SURVIVEIT_API AToolItem : public AItemBase, public ITool
 	GENERATED_BODY()
 public:
 
+	AToolItem();
 
+	/** Interface Implementation */
 	virtual int32 GetHarvestLevel() const override { return HarvestLevel; }
-
 	virtual EToolType GetToolType() const override { return ToolType; }
 
 	virtual bool TryAddToInventory(IInventoryHandler* InventoryHandler) override;

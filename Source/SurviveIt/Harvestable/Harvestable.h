@@ -16,6 +16,8 @@ class SURVIVEIT_API AHarvestable : public AActor, public IBreakableResource
 public:	
 	AHarvestable();
 
+	virtual int32 GetRequiredHarvestLevel() const override { return RequiredHarvestLevel; }
+	virtual EToolType GetRequiredToolType() const override { return RequiredToolType; }
 	virtual void OnResourceDestroyed(AActor* BreakingActor) override;
 
 protected:
@@ -34,11 +36,13 @@ private:
 	int32 RequiredHarvestLevel;
 
 	UPROPERTY()
+	EToolType RequiredToolType;
+
+	UPROPERTY()
 	TSubclassOf<AResourceItem> ResourceDrop;
 
 public:	
 	//virtual void Tick(float DeltaTime) override;
 
-	virtual int32 GetRequiredHarvestLevel() const override { return RequiredHarvestLevel; }
 
 };
