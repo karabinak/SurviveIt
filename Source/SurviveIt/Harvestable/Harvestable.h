@@ -32,13 +32,13 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	EResourceType ResourceType = EResourceType::ERT_Wood;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	int32 RequiredHarvestLevel;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	EToolType RequiredToolType;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AResourceItem> ResourceDrop;
 
 public:	

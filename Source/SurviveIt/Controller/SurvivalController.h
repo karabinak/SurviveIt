@@ -32,6 +32,8 @@ protected:
 	void OnInteractTriggered(const FInputActionValue& Value);
 	UFUNCTION()
 	void OnInventoryTriggered(const FInputActionValue& Value);
+	UFUNCTION()
+	void OnLMBTriggered(const FInputActionValue& Value);
 
 private:
 
@@ -52,6 +54,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* Inventory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* LMB;
 
 public:
 	

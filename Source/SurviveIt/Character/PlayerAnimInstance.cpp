@@ -36,4 +36,7 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	FRotator DeltaRot = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AnimRotation);
 	DeltaRotation = FMath::RInterpTo(DeltaRotation, DeltaRot, DeltaTime, 6.f);
 	YawOffset = DeltaRotation.Yaw;
+
+				/** --------- Other --------- */
+	bToolEquipped = PlayerCharacter->GetToolEquipped();
 }

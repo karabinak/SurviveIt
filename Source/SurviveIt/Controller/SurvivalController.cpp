@@ -31,6 +31,7 @@ void ASurvivalController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(JumpInput, ETriggerEvent::Started, this, &ThisClass::OnJumpTriggered);
 		EnhancedInputComponent->BindAction(Interact, ETriggerEvent::Started, this, &ThisClass::OnInteractTriggered);
 		EnhancedInputComponent->BindAction(Inventory, ETriggerEvent::Started, this, &ThisClass::OnInventoryTriggered);
+		EnhancedInputComponent->BindAction(LMB, ETriggerEvent::Started, this, &ThisClass::OnLMBTriggered);
 	}
 }
 
@@ -95,5 +96,14 @@ void ASurvivalController::OnInventoryTriggered(const FInputActionValue& Value)
 			FInputModeGameOnly GameOnly;
 			SetInputMode(GameOnly);
 		}
+	}
+}
+
+void ASurvivalController::OnLMBTriggered(const FInputActionValue& Value)
+{
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+	if (PlayerCharacter)
+	{
+		PlayerCharacter->OnLMBClicked();
 	}
 }

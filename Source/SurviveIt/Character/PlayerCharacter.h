@@ -8,6 +8,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UInventory;
 class AItemBase;
+class AToolItem;
 //class UInventoryWidget;
 
 UCLASS()
@@ -23,6 +24,8 @@ public:
 	void OnInteractionTriggered();
 
 	bool IsInventoryVisible();
+
+	void OnLMBClicked();
 
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -40,7 +43,13 @@ private:
 	UInventory* Inventory;
 
 	UPROPERTY(VisibleAnywhere, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
-	AItemBase* HitActor = nullptr;
+	AActor* HitActor = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = "Animations", meta = (AllowPrivateAccess = "true"))
+	bool bToolEquipped = false;
+
+	UPROPERTY(VisibleAnywhere, Category = "Animations", meta = (AllowPrivateAccess = "true"))
+	AToolItem* EquippedTool = nullptr;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
 	//TSubclassOf<UUserWidget> InventoryWidgetClass;
@@ -53,5 +62,6 @@ private:
 
 public:	
 
+	FORCEINLINE bool GetToolEquipped() { return bToolEquipped; }
 
 };
