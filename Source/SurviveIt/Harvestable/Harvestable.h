@@ -8,6 +8,8 @@
 #include "SurviveIt/Interfaces/BreakableResource.h"
 #include "Harvestable.generated.h"
 
+class UDataTable;
+
 UCLASS()
 class SURVIVEIT_API AHarvestable : public AActor, public IBreakableResource
 {
@@ -25,21 +27,35 @@ protected:
 
 
 private:
+	UPROPERTY(EditAnywhere)
+	FName BiomeName = FName(TEXT("Normal"));
+
+	UPROPERTY(EditAnywhere)
+	UDataTable* HarvestableDataTable;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* HarvestableMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
-	EResourceType ResourceType = EResourceType::ERT_Wood;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
+	int32 Durability;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
+	EResourceType ResourceType;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	int32 RequiredHarvestLevel;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	EToolType RequiredToolType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AResourceItem> ResourceDrop;
+
+	UPROPERTY(EditAnywhere)
+	int32 MinDrop;
+
+	UPROPERTY(EditAnywhere)
+	int32 MaxDrop;
 
 public:	
 	//virtual void Tick(float DeltaTime) override;
