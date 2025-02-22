@@ -27,6 +27,8 @@ public:
 
 	void OnLMBClicked();
 
+	void TraceLine();
+
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:

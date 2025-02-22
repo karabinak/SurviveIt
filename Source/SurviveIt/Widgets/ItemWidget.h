@@ -40,10 +40,18 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* QuantityText;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> DragVisualClass;
+
+	UPROPERTY()
+	AItemBase* ItemData;
+
 public:
 
 	void InitializeItemProperties(AItemBase* Item);
 
 	void UpdateProperties(AItemBase* Item);
+
+	void SetItemBase(AItemBase* Item) { ItemData = Item; }
 
 };

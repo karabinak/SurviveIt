@@ -86,7 +86,9 @@ void ASurvivalController::OnInventoryTriggered(const FInputActionValue& Value)
 		if (PlayerCharacter->IsInventoryVisible())
 		{
 			bShowMouseCursor = true;
+			// TEMPORARY FOR UI ONLY PURPOSE
 			FInputModeGameAndUI GameAndUI;
+			//FInputModeUIOnly GameAndUI;
 			SetInputMode(GameAndUI);
 			/* STOP MOVEMENT */
 		}

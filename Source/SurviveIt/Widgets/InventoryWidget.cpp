@@ -29,6 +29,7 @@ void UInventoryWidget::AddItemToWidget(FVector2D FirstTile, float SlotSize, AIte
 		float ItemWidth = SlotSize * Item->GetItemWidth();
 		float ItemHeight = SlotSize * Item->GetItemHeight();
 		ItemWidget->InitializeItemProperties(Item);
+		ItemWidget->SetItemBase(Item);
 		Item->SetItemWidget(ItemWidget);
 
 		UCanvasPanelSlot* CanvasSlot = InventoryCanvas->AddChildToCanvas(ItemWidget);

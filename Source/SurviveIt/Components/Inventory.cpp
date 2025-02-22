@@ -261,4 +261,5 @@ void UInventory::OccupySlots(const FIntPoint& Position, const FIntPoint& ItemSiz
 
 void UInventory::FreeSlots(AItemBase* Item)
 {
+	UE_LOG(LogTemp, Warning, TEXT("FreeSlot"));
 }

@@ -32,24 +32,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FHitResult HitResult;
-	FVector EndLocation = Camera->GetComponentLocation() + Camera->GetForwardVector() * InteractionLength;
-	FCollisionQueryParams CollisionParams;
-	CollisionParams.AddIgnoredActor(this);
-	GetWorld()->LineTraceSingleByChannel(HitResult, Camera->GetComponentLocation(), EndLocation, ECollisionChannel::ECC_Visibility, CollisionParams);
-	DrawDebugLine(GetWorld(), Camera->GetComponentLocation(), EndLocation, FColor::Red);
-
-	if (HitResult.GetActor())
-	{
-		HitActor = HitResult.GetActor();
-
-		GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("ItemName: %s"), *HitActor->GetName()));
-	}
-	else
-	{
-		HitActor = nullptr;
-		GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("ItemName: nullptr")));
-	}
+	TraceLine();
 }
 
 void APlayerCharacter::OnInteractionTriggered()
@@ -103,5 +86,27 @@ void APlayerCharacter::OnLMBClicked()
 				Breakable->OnResourceDestroyed(this);
 			}
 		}
+	}
+}
+
+void APlayerCharacter::TraceLine()
+{
+	FHitResult HitResult;
+	FVector EndLocation = Camera->GetComponentLocation() + Camera->GetForwardVector() * InteractionLength;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this);
+	GetWorld()->LineTraceSingleByChannel(HitResult, Camera->GetComponentLocation(), EndLocation, ECollisionChannel::ECC_Visibility, CollisionParams);
+	DrawDebugLine(GetWorld(), Camera->GetComponentLocation(), EndLocation, FColor::Red);
+
+	if (HitResult.GetActor())
+	{
+		HitActor = HitResult.GetActor();
+
+		GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("ItemName: %s"), *HitActor->GetName()));
+	}
+	else
+	{
+		HitActor = nullptr;
+		GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("ItemName: nullptr")));
 	}
 }
