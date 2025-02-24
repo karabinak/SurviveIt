@@ -6,17 +6,17 @@
 #include "GameFramework/Actor.h"
 #include "SurviveIt/Data/ItemData.h"
 #include "SurviveIt/Interfaces/BreakableResource.h"
-#include "Harvestable.generated.h"
+#include "Resource.generated.h"
 
 class UDataTable;
 
 UCLASS()
-class SURVIVEIT_API AHarvestable : public AActor, public IBreakableResource
+class SURVIVEIT_API AResource : public AActor, public IBreakableResource
 {
 	GENERATED_BODY()
 	
 public:	
-	AHarvestable();
+	AResource();
 
 	virtual int32 GetRequiredHarvestLevel() const override { return RequiredHarvestLevel; }
 	virtual EToolType GetRequiredToolType() const override { return RequiredToolType; }
@@ -28,13 +28,13 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere)
-	FName BiomeName = FName(TEXT("Normal"));
+	FName ResourceName = FName(TEXT("Stone"));
 
 	UPROPERTY(EditAnywhere)
-	UDataTable* HarvestableDataTable;
+	UDataTable* ResourceDataTable;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* HarvestableMesh;
+	UStaticMeshComponent* ResourceMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	int32 Durability;

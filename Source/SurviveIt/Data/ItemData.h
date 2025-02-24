@@ -45,26 +45,3 @@ enum class EResourceType : uint8
 	ERT_MAX UMETA(DisplayName = "MAX")
 };
 
-USTRUCT(BlueprintType)
-struct FInventorySlot
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Row;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Column;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	AItemBase* Item;
-};
-
-USTRUCT()
-struct FResourceItemArray
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	TArray<TObjectPtr<AResourceItem>> Items;
-};

@@ -4,7 +4,7 @@
 #include "DataTables.generated.h"
 
 USTRUCT(BlueprintType)
-struct FHarvestableData : public FTableRowBase
+struct FResourceData : public FTableRowBase
 {
 	GENERATED_BODY()
 

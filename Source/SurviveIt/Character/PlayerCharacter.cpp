@@ -88,6 +88,7 @@ void APlayerCharacter::OnLMBClicked()
 				(EquippedTool->GetHarvestLevel() >= Breakable->GetRequiredHarvestLevel()) &&
 				(EquippedTool->GetToolType() == Breakable->GetRequiredToolType());
 
+
 			if (bCanMine)
 			{
 				Breakable->OnResourceDestroyed(this);

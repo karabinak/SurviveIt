@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "SurviveIt/Data/InventoryData.h"
 #include "SurviveIt/Data/ItemData.h"
 #include "SurviveIt/Interfaces/InventoryHandler.h"
 #include "Inventory.generated.h"
