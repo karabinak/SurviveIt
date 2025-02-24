@@ -10,6 +10,7 @@
 #include "SurviveIt/Widgets/InventoryWidget.h"
 #include "SurviveIt/Items/ItemBase.h"
 #include "SurviveIt/Items/ToolItem.h"
+#include "SurviveIt/Widgets/PlayerWidget.h"
 //#include "SurviveIt/Controller/SurvivalController.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -26,6 +27,11 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (PlayerWidgetClass)
+	{
+		PlayerWidget = CreateWidget<UPlayerWidget>(GetWorld(), PlayerWidgetClass);
+		PlayerWidget->AddToViewport();
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -98,15 +104,25 @@ void APlayerCharacter::TraceLine()
 	GetWorld()->LineTraceSingleByChannel(HitResult, Camera->GetComponentLocation(), EndLocation, ECollisionChannel::ECC_Visibility, CollisionParams);
 	DrawDebugLine(GetWorld(), Camera->GetComponentLocation(), EndLocation, FColor::Red);
 
-	if (HitResult.GetActor())
+	FText WidgetItemName;
+	if (HitResult.GetActor() && Cast<AItemBase>(HitResult.GetActor()))
 	{
 		HitActor = HitResult.GetActor();
+		if (AItemBase* Item = Cast<AItemBase>(HitResult.GetActor()))
+		{
+			WidgetItemName = Item->GetItemName();
+		}
 
-		GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("ItemName: %s"), *HitActor->GetName()));
+		//GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("ItemName: %s"), *HitActor->GetName()));
 	}
 	else
 	{
 		HitActor = nullptr;
-		GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("ItemName: nullptr")));
+		WidgetItemName = FText::FromString("");
+	}
+
+	if (PlayerWidget)
+	{
+		PlayerWidget->UpdateItemName(WidgetItemName);
 	}
 }

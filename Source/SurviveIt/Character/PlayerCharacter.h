@@ -9,6 +9,7 @@ class UCameraComponent;
 class UInventory;
 class AItemBase;
 class AToolItem;
+class UPlayerWidget;
 //class UInventoryWidget;
 
 UCLASS()
@@ -53,14 +54,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	AToolItem* EquippedTool = nullptr;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
-	//TSubclassOf<UUserWidget> InventoryWidgetClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> PlayerWidgetClass;
 
-	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
-	//UInventoryWidget* InventoryWidget;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
+	UPlayerWidget* PlayerWidget;
 
-	//UPROPERTY(VisibleAnywhere, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
-	//bool bInventoryOnScreen = false;
 
 public:	
 

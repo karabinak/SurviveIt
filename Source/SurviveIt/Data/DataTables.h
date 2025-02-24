@@ -12,6 +12,9 @@ struct FHarvestableData : public FTableRowBase
 	UStaticMesh* StaticMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FText ResourceName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 Durability;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

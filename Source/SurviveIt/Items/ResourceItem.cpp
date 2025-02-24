@@ -27,10 +27,11 @@ void AResourceItem::UpdateWidget()
 	GetItemWidget()->UpdateProperties(this);
 }
 
-void AResourceItem::Initialize(EResourceType Type, int32 StartQuantity, int32 NewStackMax, UTexture2D* NewItemIcon)
+void AResourceItem::Initialize(EResourceType Type, int32 StartQuantity, int32 NewStackMax, UTexture2D* NewItemIcon, FText NewItemName)
 {
 	ResourceType = Type;
 	Quantity = StartQuantity;
 	MaxStack = NewStackMax;
 	ItemIcon = NewItemIcon;
+	ItemName = NewItemName;
 }

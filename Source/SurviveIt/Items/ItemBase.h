@@ -29,6 +29,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	UTexture2D* ItemIcon;
 
+	UPROPERTY(EditAnywhere, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
+	FText ItemName;
+
 	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* ItemMesh;
 
@@ -60,6 +63,8 @@ public:
 
 	FORCEINLINE void SetItemWidget(UItemWidget* InItemWidget) { ItemWidget = InItemWidget; }
 	FORCEINLINE UItemWidget* GetItemWidget() { return ItemWidget; }
+
+	FORCEINLINE FText GetItemName() { return ItemName; }
 
 
 };
