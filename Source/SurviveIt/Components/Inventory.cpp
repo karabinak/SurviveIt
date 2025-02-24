@@ -80,7 +80,7 @@ bool UInventory::AddResourceToInventory(AResourceItem* ResourceItem)
 		{
 			for (AResourceItem* ExistingItem : ResourceMap[ResourceType].Items)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Amount: %i"), ExistingItem->GetResourceQuantity());
+				//UE_LOG(LogTemp, Warning, TEXT("Amount: %i"), ExistingItem->GetResourceQuantity());
 				if (ExistingItem->CanAddQuantity(QuantityToAdd))
 				{
 					ExistingItem->AddQuantity(QuantityToAdd);

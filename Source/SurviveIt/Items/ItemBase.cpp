@@ -6,21 +6,24 @@ AItemBase::AItemBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("SphereComponent"));
-	SetRootComponent(BoxComponent);
-
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
+	//BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("SphereComponent"));
+
+	SetRootComponent(ItemMesh);
 	ItemMesh->SetupAttachment(GetRootComponent());
 
-	BoxComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
-	BoxComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+	ItemMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 
+	//BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	//BoxComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 }
 
 void AItemBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	ItemMesh->SetSimulatePhysics(true);
+	//BoxComponent->SetSimulatePhysics(false);
 }
 
 void AItemBase::Tick(float DeltaTime)

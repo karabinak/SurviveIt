@@ -47,6 +47,7 @@ void APlayerCharacter::OnInteractionTriggered()
 	{
 		AItemBase* InventoryItem = Cast<AItemBase>(HitActor);
 		if (!InventoryItem) return;
+		InventoryItem->DisableComponentsSimulatePhysics();
 
 		InventoryItem->TryAddToInventory(Inventory);
 

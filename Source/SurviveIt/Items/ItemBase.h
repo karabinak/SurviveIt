@@ -66,5 +66,4 @@ public:
 
 	FORCEINLINE FText GetItemName() { return ItemName; }
 
-
 };
