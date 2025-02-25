@@ -38,27 +38,25 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	TraceLine();
+	ChangeWidgetItemName();
 }
 
 void APlayerCharacter::OnInteractionTriggered()
 {
-	if (HitActor != nullptr)
-	{
-		AItemBase* InventoryItem = Cast<AItemBase>(HitActor);
-		if (!InventoryItem) return;
-		InventoryItem->DisableComponentsSimulatePhysics();
+	FHitResult HitResult = TraceLine();
 
+	if (AItemBase* InventoryItem = Cast<AItemBase>(HitResult.GetActor()))
+	{
+		InventoryItem->DisableComponentsSimulatePhysics();
 		InventoryItem->TryAddToInventory(Inventory);
 
-		
-		if (HitActor->GetClass()->ImplementsInterface(UTool::StaticClass()))
+		if (InventoryItem->Implements<UTool>())
 		{
 			if (bToolEquipped) return;
-			if (HitActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "RightWeaponSocket"))
+			if (InventoryItem->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "RightWeaponSocket"))
 			{
-				HitActor->SetActorEnableCollision(false);
-				EquippedTool = Cast<AToolItem>(HitActor);
+				InventoryItem->SetActorEnableCollision(false);
+				EquippedTool = Cast<AToolItem>(InventoryItem);
 				bToolEquipped = true;
 				UE_LOG(LogTemp, Warning, TEXT("Attached"));
 			}
@@ -76,50 +74,43 @@ bool APlayerCharacter::IsInventoryVisible()
 	return false;
 }
 
-void APlayerCharacter::OnLMBClicked()
+void APlayerCharacter::OnAttackPressed()
 {
-	if (HitActor != nullptr && bToolEquipped)
+	FHitResult HitResult = TraceLine();
+
+	if (HitResult.GetActor() == nullptr || !bToolEquipped) return;
+	if (HitResult.GetActor()->Implements<UBreakableResource>())
 	{
-		if (HitActor->GetClass()->ImplementsInterface(UBreakableResource::StaticClass()))
+		IBreakableResource* Breakable = Cast<IBreakableResource>(HitResult.GetActor());
+
+		const bool bCanMine =
+			(EquippedTool->GetHarvestLevel() >= Breakable->GetRequiredHarvestLevel()) &&
+			(EquippedTool->GetToolType() == Breakable->GetRequiredToolType());
+
+
+		if (bCanMine)
 		{
-			IBreakableResource* Breakable = Cast<IBreakableResource>(HitActor);
-
-			const bool bCanMine =
-				(EquippedTool->GetHarvestLevel() >= Breakable->GetRequiredHarvestLevel()) &&
-				(EquippedTool->GetToolType() == Breakable->GetRequiredToolType());
-
-
-			if (bCanMine)
-			{
-				Breakable->OnResourceDestroyed(this);
-			}
+			UE_LOG(LogTemp, Warning, TEXT("Can Mine"));
+			Breakable->OnResourceDestroyed(this);
 		}
-	}
-}
-
-void APlayerCharacter::TraceLine()
-{
-	FHitResult HitResult;
-	FVector EndLocation = Camera->GetComponentLocation() + Camera->GetForwardVector() * InteractionLength;
-	FCollisionQueryParams CollisionParams;
-	CollisionParams.AddIgnoredActor(this);
-	GetWorld()->LineTraceSingleByChannel(HitResult, Camera->GetComponentLocation(), EndLocation, ECollisionChannel::ECC_Visibility, CollisionParams);
-	DrawDebugLine(GetWorld(), Camera->GetComponentLocation(), EndLocation, FColor::Red);
-
-	FText WidgetItemName;
-	if (HitResult.GetActor() && Cast<AItemBase>(HitResult.GetActor()))
-	{
-		HitActor = HitResult.GetActor();
-		if (AItemBase* Item = Cast<AItemBase>(HitResult.GetActor()))
-		{
-			WidgetItemName = Item->GetItemName();
-		}
-
-		//GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Green, FString::Printf(TEXT("ItemName: %s"), *HitActor->GetName()));
 	}
 	else
 	{
-		HitActor = nullptr;
+		UE_LOG(LogTemp, Warning, TEXT("Not Implements"));
+	}
+}
+
+void APlayerCharacter::ChangeWidgetItemName()
+{
+	FHitResult HitResult = TraceLine();
+
+	FText WidgetItemName;
+	if (AItemBase* Item = Cast<AItemBase>(HitResult.GetActor()))
+	{
+		WidgetItemName = Item->GetItemName();
+	}
+	else
+	{
 		WidgetItemName = FText::FromString("");
 	}
 
@@ -127,4 +118,15 @@ void APlayerCharacter::TraceLine()
 	{
 		PlayerWidget->UpdateItemName(WidgetItemName);
 	}
+}
+
+FHitResult APlayerCharacter::TraceLine()
+{
+	FHitResult HitResult;
+	FVector EndLocation = Camera->GetComponentLocation() + Camera->GetForwardVector() * InteractionLength;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this);
+	GetWorld()->LineTraceSingleByChannel(HitResult, Camera->GetComponentLocation(), EndLocation, ECollisionChannel::ECC_Visibility, CollisionParams);
+	DrawDebugLine(GetWorld(), Camera->GetComponentLocation(), EndLocation, FColor::Red);
+	return HitResult;
 }

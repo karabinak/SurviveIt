@@ -33,7 +33,7 @@ protected:
 	UFUNCTION()
 	void OnInventoryTriggered(const FInputActionValue& Value);
 	UFUNCTION()
-	void OnLMBTriggered(const FInputActionValue& Value);
+	void OnAttackPressed(const FInputActionValue& Value);
 
 private:
 
@@ -56,7 +56,7 @@ private:
 	UInputAction* Inventory;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
-	UInputAction* LMB;
+	UInputAction* Attack;
 
 public:
 	

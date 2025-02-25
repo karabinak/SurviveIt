@@ -26,14 +26,16 @@ public:
 
 	bool IsInventoryVisible();
 
-	void OnLMBClicked();
+	void OnAttackPressed();
 
-	void TraceLine();
+	void ChangeWidgetItemName();
 
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
 	virtual void BeginPlay() override;
+
+	FHitResult TraceLine();
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", meta = (AllowPrivateAccess = "true"))
@@ -45,8 +47,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
 	UInventory* Inventory;
 
-	UPROPERTY(VisibleAnywhere, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
-	AActor* HitActor = nullptr;
+	//UPROPERTY(VisibleAnywhere, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
+	//AActor* HitActor = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = "Animations", meta = (AllowPrivateAccess = "true"))
 	bool bToolEquipped = false;
