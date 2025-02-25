@@ -27,38 +27,37 @@ protected:
 
 
 private:
-	UPROPERTY(EditAnywhere)
-	FName ResourceName = FName(TEXT("Stone"));
 
-	UPROPERTY(EditAnywhere)
-	UDataTable* ResourceDataTable;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
+	FName ResourceName = FName(TEXT(""));
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* ResourceMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	int32 Durability;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	EResourceType ResourceType;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	int32 RequiredHarvestLevel;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	EToolType RequiredToolType;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AResourceItem> ResourceDrop;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	int32 MinDrop;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	int32 MaxDrop;
 
 public:	
 	//virtual void Tick(float DeltaTime) override;
 
+	/*FORCEINLINE void SetResourceName(FName NewName) { ResourceName = NewName; }*/
 
 };

@@ -18,22 +18,22 @@ void AResource::BeginPlay()
 	Super::BeginPlay();
 
 	/** Load Resource based on Biome From DataTable */
-	if (ResourceDataTable)
-	{
-		static const FString ContextString(TEXT("Context"));
-		FResourceData* ResourceData = ResourceDataTable->FindRow<FResourceData>(ResourceName, ContextString,  true);
-		if (ResourceData)
-		{
-			ResourceMesh->SetStaticMesh(ResourceData->StaticMesh);
-			Durability = ResourceData->Durability;
-			ResourceType = ResourceData->ResourceType;
-			RequiredHarvestLevel = ResourceData->RequiredHarvestLevel;
-			RequiredToolType = ResourceData->RequiredToolType;
-			ResourceDrop = ResourceData->ResourcesDrop;
-			MinDrop = ResourceData->MinDrop;
-			MaxDrop = ResourceData->MaxDrop;
-		}
-	}
+	//if (ResourceDataTable)
+	//{
+	//	static const FString ContextString(TEXT("Context"));
+	//	FResourceData* ResourceData = ResourceDataTable->FindRow<FResourceData>(ResourceName, ContextString,  true);
+	//	if (ResourceData)
+	//	{
+	//		ResourceMesh->SetStaticMesh(ResourceData->StaticMesh);
+	//		Durability = ResourceData->Durability;
+	//		ResourceType = ResourceData->ResourceType;
+	//		RequiredHarvestLevel = ResourceData->RequiredHarvestLevel;
+	//		RequiredToolType = ResourceData->RequiredToolType;
+	//		ResourceDrop = ResourceData->ResourcesDrop;
+	//		MinDrop = ResourceData->MinDrop;
+	//		MaxDrop = ResourceData->MaxDrop;
+	//	}
+	//}
 }
 
 void AResource::OnResourceDestroyed(AActor* BreakingActor)
