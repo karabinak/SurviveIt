@@ -23,6 +23,8 @@ public:
 
 	virtual bool TryAddToInventory(IInventoryHandler* InventoryHandler) { return false; }
 
+	void RemoveWidget();
+
 protected:
 	virtual void BeginPlay() override;
 

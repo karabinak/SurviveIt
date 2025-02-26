@@ -45,5 +45,6 @@ public:
 	void InitializeGrid(float SlotSize, int32 Rows, int32 Columns);
 
 	void AddItemToWidget(FVector2D FirstTile, float SlotSize, AItemBase* Item);
+	void RemoveWidget(UItemWidget* InWidget);
 
 };

@@ -34,6 +34,8 @@ protected:
 	void OnInventoryTriggered(const FInputActionValue& Value);
 	UFUNCTION()
 	void OnAttackPressed(const FInputActionValue& Value);
+	UFUNCTION()
+	void OnDropPressed(const FInputActionValue& Value);
 
 private:
 
@@ -57,6 +59,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* Attack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* Drop;
 
 public:
 	

@@ -18,6 +18,11 @@ AItemBase::AItemBase()
 	//BoxComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 }
 
+void AItemBase::RemoveWidget()
+{
+
+}
+
 void AItemBase::BeginPlay()
 {
 	Super::BeginPlay();

@@ -114,6 +114,15 @@ void APlayerCharacter::ChangeWidgetItemName()
 	}
 }
 
+void APlayerCharacter::OnDropPressed()
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnDropPressed"));
+	if (EquippedTool)
+	{
+		DropItemOnTheGround(EquippedTool);
+	}
+}
+
 FHitResult APlayerCharacter::TraceLine()
 {
 	FHitResult HitResult;
@@ -123,4 +132,25 @@ FHitResult APlayerCharacter::TraceLine()
 	GetWorld()->LineTraceSingleByChannel(HitResult, Camera->GetComponentLocation(), EndLocation, ECollisionChannel::ECC_Visibility, CollisionParams);
 	DrawDebugLine(GetWorld(), Camera->GetComponentLocation(), EndLocation, FColor::Red);
 	return HitResult;
+}
+
+void APlayerCharacter::DropItemOnTheGround(AItemBase* ItemToDrop)
+{
+	if (Inventory->IsItemInInventory(ItemToDrop))
+	{	
+		//EquippedTool->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		EquippedTool->SetActorEnableCollision(true);
+		EquippedTool->GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.Template = EquippedTool;
+		FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 50.f;
+		SpawnLocation.Z += 50.f;
+		FVector Impulse = GetActorForwardVector() * 1000.f;
+		AToolItem* Tool = GetWorld()->SpawnActor<AToolItem>(EquippedTool->GetClass(), SpawnLocation, GetActorRotation(), SpawnParameters);
+		Tool->GetMesh()->AddImpulse(Impulse);
+
+		EquippedTool->Destroy();
+		bToolEquipped = false;
+	}
 }

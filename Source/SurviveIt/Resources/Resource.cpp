@@ -43,7 +43,6 @@ void AResource::OnResourceHit(AActor* BreakingActor, int32 HarvestDamage)
 	{
 		Durability -= HarvestDamage;
 		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Magenta, FString::Printf(TEXT("Durability of: %s is %i"), *GetName(), Durability));
-		// Drop Items
 	}
 	else
 	{

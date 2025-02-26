@@ -34,7 +34,7 @@ protected:
 	UFUNCTION()
 	void OccupySlots(const FIntPoint& Position, const FIntPoint& ItemSize, AItemBase* Item);
 	UFUNCTION()
-	void FreeSlots(AItemBase* Item);
+	void FreeSlots(AItemBase* Item, FIntPoint Position);
 
 private:
 
@@ -65,12 +65,9 @@ private:
 
 public:	
 
-	//bool AddToInventory(AItemBase* Item);
-	//bool AddToInventoryWithQuantiy(AItemBase* Item);
-
-	bool ItemCanFit(int32 Row, int32 Column, AItemBase* Item);
-
 	bool IsInventoryWidgetVisible();
+
+	bool IsItemInInventory(AItemBase* ItemBase);
 
 };
 

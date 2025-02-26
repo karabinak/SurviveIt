@@ -39,3 +39,11 @@ void UInventoryWidget::AddItemToWidget(FVector2D FirstTile, float SlotSize, AIte
 		ItemWidgetArray.Add(ItemWidget);
 	}
 }
+
+void UInventoryWidget::RemoveWidget(UItemWidget* InWidget)
+{
+	if (ItemWidgetArray.Contains(InWidget))
+	{
+		ItemWidgetArray[ItemWidgetArray.Find(InWidget)]->RemoveFromParent();
+	}
+}

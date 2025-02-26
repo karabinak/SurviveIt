@@ -23,12 +23,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void OnInteractionTriggered();
-
 	bool IsInventoryVisible();
-
 	void OnAttackPressed();
-
 	void ChangeWidgetItemName();
+	void OnDropPressed();
 
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -36,6 +34,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	FHitResult TraceLine();
+
+	void DropItemOnTheGround(AItemBase* ItemToDrop);
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", meta = (AllowPrivateAccess = "true"))

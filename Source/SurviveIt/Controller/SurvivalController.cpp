@@ -32,6 +32,7 @@ void ASurvivalController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(Interact, ETriggerEvent::Started, this, &ThisClass::OnInteractTriggered);
 		EnhancedInputComponent->BindAction(Inventory, ETriggerEvent::Started, this, &ThisClass::OnInventoryTriggered);
 		EnhancedInputComponent->BindAction(Attack, ETriggerEvent::Started, this, &ThisClass::OnAttackPressed);
+		EnhancedInputComponent->BindAction(Drop, ETriggerEvent::Started, this, &ThisClass::OnDropPressed);
 	}
 }
 
@@ -107,5 +108,14 @@ void ASurvivalController::OnAttackPressed(const FInputActionValue& Value)
 	if (PlayerCharacter)
 	{
 		PlayerCharacter->OnAttackPressed();
+	}
+}
+
+void ASurvivalController::OnDropPressed(const FInputActionValue& Value)
+{
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+	if (PlayerCharacter)
+	{
+		PlayerCharacter->OnDropPressed();
 	}
 }
