@@ -4,6 +4,7 @@
 #include "Resource.h"
 
 #include "SurviveIt/Data/DataTables.h"
+#include "SurviveIt/Items/ResourceItem.h"
 
 AResource::AResource()
 {
@@ -36,7 +37,51 @@ void AResource::BeginPlay()
 	//}
 }
 
-void AResource::OnResourceDestroyed(AActor* BreakingActor)
+void AResource::OnResourceHit(AActor* BreakingActor, int32 HarvestDamage)
 {
-	Destroy();
+	if (Durability - HarvestDamage > 0)
+	{
+		Durability -= HarvestDamage;
+		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Magenta, FString::Printf(TEXT("Durability of: %s is %i"), *GetName(), Durability));
+		// Drop Items
+	}
+	else
+	{
+		int32 ResourceAmount = FMath::RandRange(MinDrop, MaxDrop);
+
+		FVector SpawnLocation = GetActorLocation();
+		SpawnLocation.Z += 100.f;
+		FVector Impulse = FVector(0.f, 0.f, 100.f);
+
+		FActorSpawnParameters SpawnParameters;
+		AResourceItem* ResourceItem = GetWorld()->SpawnActor<AResourceItem>(ResourceDrop, SpawnLocation, GetActorRotation(), SpawnParameters);
+		ResourceItem->GetMesh()->AddImpulse(Impulse);
+
+		int32 RemainingQuantity = ResourceAmount;
+		const int32 MaxStack = ResourceItem->GetMaxStack();
+
+		if (ResourceAmount <= MaxStack)
+		{
+			ResourceItem->SetResourceQuantity(ResourceAmount);
+		}
+		else
+		{
+			ResourceItem->SetResourceQuantity(MaxStack);
+			RemainingQuantity -= MaxStack;
+
+			while (RemainingQuantity > 0)
+			{
+				SpawnLocation = SpawnLocation + 50.f;
+				int32 QuantityToAdd = FMath::Min(RemainingQuantity, MaxStack);
+				RemainingQuantity -= QuantityToAdd;
+
+				ResourceItem = GetWorld()->SpawnActor<AResourceItem>(ResourceDrop, SpawnLocation, GetActorRotation(), SpawnParameters);
+				ResourceItem->SetResourceQuantity(QuantityToAdd);
+				ResourceItem->GetMesh()->AddImpulse(Impulse);
+				UE_LOG(LogTemp, Warning, TEXT("Spawned"));
+			}
+		}
+
+		Destroy();
+	}
 }

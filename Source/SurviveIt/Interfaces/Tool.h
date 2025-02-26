@@ -22,4 +22,6 @@ public:
 	virtual int32 GetHarvestLevel() const = 0;
 	UFUNCTION()
 	virtual EToolType GetToolType() const = 0;
+	UFUNCTION()
+	virtual int32 GetHarvestDamage() const = 0;
 };

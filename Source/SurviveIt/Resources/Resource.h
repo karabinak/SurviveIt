@@ -20,11 +20,11 @@ public:
 
 	virtual int32 GetRequiredHarvestLevel() const override { return RequiredHarvestLevel; }
 	virtual EToolType GetRequiredToolType() const override { return RequiredToolType; }
-	virtual void OnResourceDestroyed(AActor* BreakingActor) override;
+	virtual void OnResourceHit(AActor* BreakingActor, int32 HarvestDamage) override;
 
 protected:
 	virtual void BeginPlay() override;
-
+	
 
 private:
 
@@ -49,10 +49,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AResourceItem> ResourceDrop;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	int32 MinDrop;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Resource Properties", meta = (AllowPrivateAccess = "true"))
 	int32 MaxDrop;
 
 public:	

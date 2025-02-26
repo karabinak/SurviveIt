@@ -87,16 +87,10 @@ void APlayerCharacter::OnAttackPressed()
 			(EquippedTool->GetHarvestLevel() >= Breakable->GetRequiredHarvestLevel()) &&
 			(EquippedTool->GetToolType() == Breakable->GetRequiredToolType());
 
-
 		if (bCanMine)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Can Mine"));
-			Breakable->OnResourceDestroyed(this);
+			Breakable->OnResourceHit(this, EquippedTool->GetHarvestDamage());
 		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Not Implements"));
 	}
 }
 

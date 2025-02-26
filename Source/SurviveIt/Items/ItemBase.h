@@ -65,5 +65,6 @@ public:
 	FORCEINLINE UItemWidget* GetItemWidget() { return ItemWidget; }
 
 	FORCEINLINE FText GetItemName() { return ItemName; }
+	FORCEINLINE UStaticMeshComponent* GetMesh() { return ItemMesh; }
 
 };

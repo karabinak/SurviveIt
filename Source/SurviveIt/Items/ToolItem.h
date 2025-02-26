@@ -19,6 +19,7 @@ public:
 	/** Interface Implementation */
 	virtual int32 GetHarvestLevel() const override { return HarvestLevel; }
 	virtual EToolType GetToolType() const override { return ToolType; }
+	virtual int32 GetHarvestDamage() const override { return HarvestDamage; }
 
 	virtual bool TryAddToInventory(IInventoryHandler* InventoryHandler) override;
 
@@ -32,6 +33,9 @@ private:
 	/** 0 - Wooden; 1 - Stone; 2 - Iron; ... */
 	UPROPERTY(EditAnywhere, Category = "Tool Properties", meta = (AllowPrivateAccess = "true"))
 	int32 HarvestLevel = 0;
+
+	UPROPERTY(EditAnywhere, Category = "Tool Properties", meta = (AllowPrivateAccess = "true"))
+	int32 HarvestDamage = 10;
 
 	UPROPERTY(EditAnywhere, Category = "Tool Properties", meta = (AllowPrivateAccess = "true"))
 	EToolType ToolType = EToolType::ETT_Axe;
