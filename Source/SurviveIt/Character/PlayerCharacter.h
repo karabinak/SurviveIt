@@ -4,12 +4,12 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
-class USpringArmComponent;
 class UCameraComponent;
-class UInventory;
-class AItemBase;
-class AToolItem;
-class UPlayerWidget;
+class UInventoryComponent;
+class UHotbarComponent;
+class UBaseItem;
+class UToolItem;
+
 //class UInventoryWidget;
 
 UCLASS()
@@ -20,51 +20,55 @@ class SURVIVEIT_API APlayerCharacter : public ACharacter
 public:
 	APlayerCharacter();
 
-	virtual void Tick(float DeltaTime) override;
-
-	void OnInteractionTriggered();
-	bool IsInventoryVisible();
-	void OnAttackPressed();
-	void ChangeWidgetItemName();
-	void OnDropPressed();
-
-	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UInventoryComponent* InventoryComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UHotbarComponent* HotbarComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interaction")
+	float InteractionDistance;
+
 	virtual void BeginPlay() override;
 
-	FHitResult TraceLine();
-
-	void DropItemOnTheGround(AItemBase* ItemToDrop);
-
 private:
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* Camera;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-	float InteractionLength = 500.f;
+public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
-	UInventory* Inventory;
+	virtual void Tick(float DeltaTime) override;
 
-	//UPROPERTY(VisibleAnywhere, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
-	//AActor* HitActor = nullptr;
+	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(VisibleAnywhere, Category = "Animations", meta = (AllowPrivateAccess = "true"))
-	bool bToolEquipped = false;
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	UInventoryComponent* GetInventoryComponent() const;
 
-	UPROPERTY(VisibleAnywhere, Category = "Animations", meta = (AllowPrivateAccess = "true"))
-	AToolItem* EquippedTool = nullptr;
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	UHotbarComponent* GetHotbarComponent() const;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UUserWidget> PlayerWidgetClass;
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void ToggleInventory();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
-	UPlayerWidget* PlayerWidget;
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	bool TryPickupItem();
 
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	bool DropItemFromInventory(UBaseItem* Item, int32 Quantity = 1);
 
-public:	
+	void UseHotbarItem();
 
-	FORCEINLINE bool GetToolEquipped() { return bToolEquipped; }
+	void SelectHotbarSlot(int32 SlotIndex);
+
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	AActor* GetLookAtActor(float MaxDistance = 300.f);
+
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	bool TryHarvest();
+
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	UToolItem* GetEquippedTool();
 
 };

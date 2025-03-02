@@ -6,8 +6,9 @@
 #include "UObject/Interface.h"
 #include "InventoryHandler.generated.h"
 
-//class AToolItem;
-//class AResourceItem;
+class AToolItem;
+class AResourceItem;
+class UBaseItem;
 
 UINTERFACE(MinimalAPI)
 class UInventoryHandler : public UInterface
@@ -22,6 +23,6 @@ class SURVIVEIT_API IInventoryHandler
 
 public:
 
-	virtual bool AddToolToInventory(class AToolItem* ToolItem) = 0;
-	virtual bool AddResourceToInventory(class AResourceItem* ResourceItem) = 0;
+	//virtual bool AddToolToInventory(AToolItem* ToolItem) = 0;
+	//virtual bool AddResourceToInventory(AResourceItem* ResourceItem) = 0;
 };

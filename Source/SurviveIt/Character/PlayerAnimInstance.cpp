@@ -38,5 +38,5 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	YawOffset = DeltaRotation.Yaw;
 
 				/** --------- Other --------- */
-	bToolEquipped = PlayerCharacter->GetToolEquipped();
+	//bToolEquipped = PlayerCharacter->GetToolEquipped();
 }

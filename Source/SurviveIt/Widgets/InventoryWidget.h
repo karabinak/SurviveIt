@@ -8,7 +8,7 @@
 
 class UBorder;
 class UCanvasPanel;
-class AItemBase;
+class UBaseItem;
 class UItemWidget;
 
 UCLASS()
@@ -42,9 +42,9 @@ private:
 
 public:
 
-	void InitializeGrid(float SlotSize, int32 Rows, int32 Columns);
+	//void InitializeGrid(float SlotSize, int32 Rows, int32 Columns);
 
-	void AddItemToWidget(FVector2D FirstTile, float SlotSize, AItemBase* Item);
-	void RemoveWidget(UItemWidget* InWidget);
+	//void AddItemToWidget(FVector2D FirstTile, float SlotSize, UBaseItem* Item);
+	//void RemoveWidget(UItemWidget* InWidget);
 
 };

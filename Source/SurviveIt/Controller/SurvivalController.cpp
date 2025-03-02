@@ -30,9 +30,11 @@ void ASurvivalController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(LookAroundInput, ETriggerEvent::Triggered, this, &ThisClass::OnLookAroundTriggered);
 		EnhancedInputComponent->BindAction(JumpInput, ETriggerEvent::Started, this, &ThisClass::OnJumpTriggered);
 		EnhancedInputComponent->BindAction(Interact, ETriggerEvent::Started, this, &ThisClass::OnInteractTriggered);
-		EnhancedInputComponent->BindAction(Inventory, ETriggerEvent::Started, this, &ThisClass::OnInventoryTriggered);
-		EnhancedInputComponent->BindAction(Attack, ETriggerEvent::Started, this, &ThisClass::OnAttackPressed);
-		EnhancedInputComponent->BindAction(Drop, ETriggerEvent::Started, this, &ThisClass::OnDropPressed);
+		EnhancedInputComponent->BindAction(Inventory, ETriggerEvent::Started, this, &ThisClass::OnToggleInventory);
+		EnhancedInputComponent->BindAction(Use, ETriggerEvent::Started, this, &ThisClass::OnUsePressed);
+		//EnhancedInputComponent->BindAction(Drop, ETriggerEvent::Started, this, &ThisClass::OnDropPressed);
+
+		EnhancedInputComponent->BindAction(HotbarSlot1, ETriggerEvent::Triggered, this, &ThisClass::OnNumberTriggered);
 	}
 }
 
@@ -75,47 +77,34 @@ void ASurvivalController::OnInteractTriggered(const FInputActionValue& Value)
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 	if (PlayerCharacter)
 	{
-		PlayerCharacter->OnInteractionTriggered();
+		PlayerCharacter->TryPickupItem();
 	}
 }
 
-void ASurvivalController::OnInventoryTriggered(const FInputActionValue& Value)
+void ASurvivalController::OnToggleInventory(const FInputActionValue& Value)
 {
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 	if (PlayerCharacter)
 	{
-		if (PlayerCharacter->IsInventoryVisible())
-		{
-			bShowMouseCursor = true;
-			// TEMPORARY FOR UI ONLY PURPOSE
-			FInputModeGameAndUI GameAndUI;
-			//FInputModeUIOnly GameAndUI;
-			SetInputMode(GameAndUI);
-			/* STOP MOVEMENT */
-		}
-		else
-		{
-			bShowMouseCursor = false;
-			FInputModeGameOnly GameOnly;
-			SetInputMode(GameOnly);
-		}
+		PlayerCharacter->ToggleInventory();
 	}
 }
 
-void ASurvivalController::OnAttackPressed(const FInputActionValue& Value)
+void ASurvivalController::OnUsePressed(const FInputActionValue& Value)
 {
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 	if (PlayerCharacter)
 	{
-		PlayerCharacter->OnAttackPressed();
+		PlayerCharacter->UseHotbarItem();
 	}
 }
 
-void ASurvivalController::OnDropPressed(const FInputActionValue& Value)
+void ASurvivalController::OnNumberTriggered(const FInputActionValue& Value)
 {
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 	if (PlayerCharacter)
 	{
-		PlayerCharacter->OnDropPressed();
+		// TO CHANGE
+		PlayerCharacter->SelectHotbarSlot(0);
 	}
 }

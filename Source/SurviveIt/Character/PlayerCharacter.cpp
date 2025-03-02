@@ -1,16 +1,18 @@
 #include "PlayerCharacter.h"
 
 #include "Camera/CameraComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "Blueprint/UserWidget.h"
+//#include "GameFramework/SpringArmComponent.h"
+//#include "Blueprint/UserWidget.h"
 
-#include "SurviveIt/Components/Inventory.h"
-#include "SurviveIt/Interfaces/Tool.h"
-#include "SurviveIt/Interfaces/BreakableResource.h"
-#include "SurviveIt/Widgets/InventoryWidget.h"
-#include "SurviveIt/Items/ItemBase.h"
+#include "SurviveIt/Components/InventoryComponent.h"
+#include "SurviveIt/Components/HotbarComponent.h"
+//#include "SurviveIt/Interfaces/Tool.h"
+#include "SurviveIt/Interfaces/Harvestable.h"
+//#include "SurviveIt/Widgets/InventoryWidget.h"
+#include "SurviveIt/Items/WorldItem.h"
+#include "SurviveIt/Items/BaseItem.h"
 #include "SurviveIt/Items/ToolItem.h"
-#include "SurviveIt/Widgets/PlayerWidget.h"
+//#include "SurviveIt/Widgets/PlayerWidget.h"
 //#include "SurviveIt/Controller/SurvivalController.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -18,139 +20,200 @@ APlayerCharacter::APlayerCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
-	Inventory = CreateDefaultSubobject<UInventory>(TEXT("InventoryComponent"));
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+	HotbarComponent = CreateDefaultSubobject<UHotbarComponent>(TEXT("HotbarComponent"));
 
 	Camera->SetupAttachment(GetMesh(), FName(TEXT("head")));
+
+	InteractionDistance = 200.f;
 }
 
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Inventory size
+	InventoryComponent->Initialize(10, 5);
+
+	HotbarComponent->Initialize(10);
 	
-	if (PlayerWidgetClass)
-	{
-		PlayerWidget = CreateWidget<UPlayerWidget>(GetWorld(), PlayerWidgetClass);
-		PlayerWidget->AddToViewport();
-	}
+	//if (PlayerWidgetClass)
+	//{
+	//	PlayerWidget = CreateWidget<UPlayerWidget>(GetWorld(), PlayerWidgetClass);
+	//	PlayerWidget->AddToViewport();
+	//}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	ChangeWidgetItemName();
+	//ChangeWidgetItemName();
 }
 
-void APlayerCharacter::OnInteractionTriggered()
+UInventoryComponent* APlayerCharacter::GetInventoryComponent() const
 {
-	FHitResult HitResult = TraceLine();
+	return InventoryComponent;
+}
 
-	if (AItemBase* InventoryItem = Cast<AItemBase>(HitResult.GetActor()))
+UHotbarComponent* APlayerCharacter::GetHotbarComponent() const
+{
+	return HotbarComponent;
+}
+
+void APlayerCharacter::ToggleInventory()
+{
+	/* TODO
+	
+		Create HUD
+		HUD->ToggleInventoryUI();
+	*/
+}
+
+bool APlayerCharacter::TryPickupItem()
+{
+	FVector CameraLocation;
+	FRotator CameraRotation;
+	GetActorEyesViewPoint(CameraLocation, CameraRotation);
+
+	FVector TraceStart = CameraLocation;
+	FVector TraceEnd = TraceStart + (CameraRotation.Vector() * InteractionDistance);
+
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	FHitResult HitResult;
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, QueryParams);
+
+	// DEBUG LINE
+	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 1.0f);
+
+	if (bHit)
+    {
+        AWorldItem* WorldItem = Cast<AWorldItem>(HitResult.GetActor());
+        if (WorldItem)
+        {
+            UBaseItem* Item = WorldItem->GetItem();
+            if (Item)
+            {
+                if (InventoryComponent->AddItem(Item))
+                {
+                    WorldItem->OnPickup();
+                    return true;
+                }
+            }
+        }
+    }
+    
+    return false;
+}
+
+bool APlayerCharacter::DropItemFromInventory(UBaseItem* Item, int32 Quantity)
+{
+	if (!Item ||  Quantity <= 0) return false;
+
+	int32 CurrentQuantity = Item->GetQuantity();
+	if (Quantity > CurrentQuantity)
 	{
-		InventoryItem->DisableComponentsSimulatePhysics();
-		InventoryItem->TryAddToInventory(Inventory);
-
-		if (InventoryItem->Implements<UTool>())
-		{
-			if (bToolEquipped) return;
-			if (InventoryItem->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "RightWeaponSocket"))
-			{
-				InventoryItem->SetActorEnableCollision(false);
-				EquippedTool = Cast<AToolItem>(InventoryItem);
-				bToolEquipped = true;
-				UE_LOG(LogTemp, Warning, TEXT("Attached"));
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("NotAttached"));
-			}
-		}
+		Quantity = CurrentQuantity;
 	}
-}
 
-bool APlayerCharacter::IsInventoryVisible()
-{
-	if (Inventory->IsInventoryWidgetVisible()) return true;
-	return false;
-}
+	UBaseItem* DroppedItem = nullptr;
 
-void APlayerCharacter::OnAttackPressed()
-{
-	FHitResult HitResult = TraceLine();
-
-	if (HitResult.GetActor() == nullptr || !bToolEquipped) return;
-	if (HitResult.GetActor()->Implements<UBreakableResource>())
+	if (Quantity < CurrentQuantity)
 	{
-		IBreakableResource* Breakable = Cast<IBreakableResource>(HitResult.GetActor());
-
-		const bool bCanMine =
-			(EquippedTool->GetHarvestLevel() >= Breakable->GetRequiredHarvestLevel()) &&
-			(EquippedTool->GetToolType() == Breakable->GetRequiredToolType());
-
-		if (bCanMine)
-		{
-			Breakable->OnResourceHit(this, EquippedTool->GetHarvestDamage());
-		}
-	}
-}
-
-void APlayerCharacter::ChangeWidgetItemName()
-{
-	FHitResult HitResult = TraceLine();
-
-	FText WidgetItemName;
-	if (AItemBase* Item = Cast<AItemBase>(HitResult.GetActor()))
-	{
-		WidgetItemName = Item->GetItemName();
+		DroppedItem = Item->SplitStack(Quantity);
 	}
 	else
 	{
-		WidgetItemName = FText::FromString("");
+		TArray<FInventorySlot> ItemSlots = InventoryComponent->GetItemSlots(Item);
+		if (ItemSlots.Num() > 0)
+		{
+			DroppedItem = InventoryComponent->RemoveItemAt(ItemSlots[0].X, ItemSlots[0].Y);
+		}
 	}
 
-	if (PlayerWidget)
+	if (DroppedItem)
 	{
-		PlayerWidget->UpdateItemName(WidgetItemName);
+		FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 100.f;
+		FRotator SpawnRotation = FRotator::ZeroRotator;
+
+		AWorldItem::SpawnItemInWorld(GetWorld(), DroppedItem, SpawnLocation, SpawnRotation);
+		return true;
 	}
+	return false;
 }
 
-void APlayerCharacter::OnDropPressed()
+void APlayerCharacter::UseHotbarItem()
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnDropPressed"));
-	if (EquippedTool)
-	{
-		DropItemOnTheGround(EquippedTool);
-	}
+	HotbarComponent->UseSelectedItem();
 }
 
-FHitResult APlayerCharacter::TraceLine()
+void APlayerCharacter::SelectHotbarSlot(int32 SlotIndex)
 {
+	HotbarComponent->SelectSlot(SlotIndex);
+}
+
+AActor* APlayerCharacter::GetLookAtActor(float MaxDistance)
+{
+	FVector CameraLocation;
+	FRotator CameraRotation;
+	GetActorEyesViewPoint(CameraLocation, CameraRotation);
+
+	FVector TraceStart = CameraLocation;
+	FVector TraceEnd = TraceStart + (CameraRotation.Vector() * MaxDistance);
+
 	FHitResult HitResult;
-	FVector EndLocation = Camera->GetComponentLocation() + Camera->GetForwardVector() * InteractionLength;
-	FCollisionQueryParams CollisionParams;
-	CollisionParams.AddIgnoredActor(this);
-	GetWorld()->LineTraceSingleByChannel(HitResult, Camera->GetComponentLocation(), EndLocation, ECollisionChannel::ECC_Visibility, CollisionParams);
-	DrawDebugLine(GetWorld(), Camera->GetComponentLocation(), EndLocation, FColor::Red);
-	return HitResult;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
+	{
+		return HitResult.GetActor();
+	}
+
+	return nullptr;
 }
 
-void APlayerCharacter::DropItemOnTheGround(AItemBase* ItemToDrop)
+bool APlayerCharacter::TryHarvest()
 {
-	if (Inventory->IsItemInInventory(ItemToDrop))
-	{	
-		//EquippedTool->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		EquippedTool->SetActorEnableCollision(true);
-		EquippedTool->GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	AActor* LookAtActor = GetLookAtActor();
+	if (!LookAtActor || !LookAtActor->Implements<UHarvestable>()) return false;
 
-		FActorSpawnParameters SpawnParameters;
-		SpawnParameters.Template = EquippedTool;
-		FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 50.f;
-		SpawnLocation.Z += 50.f;
-		FVector Impulse = GetActorForwardVector() * 1000.f;
-		AToolItem* Tool = GetWorld()->SpawnActor<AToolItem>(EquippedTool->GetClass(), SpawnLocation, GetActorRotation(), SpawnParameters);
-		Tool->GetMesh()->AddImpulse(Impulse);
 
-		EquippedTool->Destroy();
-		bToolEquipped = false;
+	UToolItem* EquippedTool = GetEquippedTool();
+	EToolType ToolType = EquippedTool ? EquippedTool->GetToolData()->ToolType : EToolType::ETT_None;
+	float HarvestDamage = EquippedTool ? EquippedTool->GetToolData()->Damage : 5.0f;
+
+	IHarvestable* Harvestable = Cast<IHarvestable>(LookAtActor);
+	if (Harvestable->CanHarvest(ToolType))
+	{
+		TArray<UBaseItem*> HarvestedItems = Harvestable->Harvest(ToolType, HarvestDamage);
+
+		bool AllitemsCollected;
+		for (UBaseItem* Item : HarvestedItems)
+		{
+			if (!InventoryComponent->AddItem(Item))
+			{
+				AWorldItem::SpawnItemInWorld(this, Item, GetActorLocation(), FRotator::ZeroRotator);
+				AllitemsCollected = false;
+			}
+		}
+
+		if (EquippedTool)
+		{
+			EquippedTool->ReduceDurability(1.f);
+		}
+
+		// Feedback to player that they harvest Item UI
+		return true;
 	}
+	return false;
+}
+
+UToolItem* APlayerCharacter::GetEquippedTool()
+{
+	UBaseItem* SelectedItem = HotbarComponent->GetSelectedItem();
+
+	return Cast<UToolItem>(SelectedItem);
 }

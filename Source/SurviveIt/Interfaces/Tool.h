@@ -18,10 +18,10 @@ class SURVIVEIT_API ITool
 	GENERATED_BODY()
 
 public:
-	UFUNCTION()
-	virtual int32 GetHarvestLevel() const = 0;
-	UFUNCTION()
-	virtual EToolType GetToolType() const = 0;
-	UFUNCTION()
-	virtual int32 GetHarvestDamage() const = 0;
+	//UFUNCTION()
+	//virtual int32 GetHarvestLevel() const = 0;
+	//UFUNCTION()
+	//virtual EToolType GetToolType() const = 0;
+	//UFUNCTION()
+	//virtual int32 GetHarvestDamage() const = 0;
 };

@@ -4,28 +4,28 @@
 #include "InventoryData.generated.h"
 
 class AResourceItem;
-class AItemBase;
+class UBaseItem;
 
-USTRUCT(BlueprintType)
-struct FInventorySlot
-{
-	GENERATED_BODY()
+//USTRUCT(BlueprintType)
+//struct FInventorySlot
+//{
+//	GENERATED_BODY()
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	int32 Row;
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	int32 Column;
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	UBaseItem* Item;
+//};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Row;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Column;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	AItemBase* Item;
-};
-
-USTRUCT()
-struct FResourceItemArray
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	TArray<TObjectPtr<AResourceItem>> Items;
-};
+//USTRUCT()
+//struct FResourceItemArray
+//{
+//	GENERATED_BODY()
+//
+//	UPROPERTY()
+//	TArray<TObjectPtr<AResourceItem>> Items;
+//};

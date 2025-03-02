@@ -29,13 +29,13 @@ protected:
 	UFUNCTION()
 	void OnLookAroundTriggered(const FInputActionValue& Value);
 	UFUNCTION()
-	void OnInteractTriggered(const FInputActionValue& Value);
+	void OnInteractTriggered(const FInputActionValue& Value); // NOW: Picking up items
 	UFUNCTION()
-	void OnInventoryTriggered(const FInputActionValue& Value);
+	void OnToggleInventory(const FInputActionValue& Value);
 	UFUNCTION()
-	void OnAttackPressed(const FInputActionValue& Value);
+	void OnUsePressed(const FInputActionValue& Value);
 	UFUNCTION()
-	void OnDropPressed(const FInputActionValue& Value);
+	void OnNumberTriggered(const FInputActionValue& Value);
 
 private:
 
@@ -58,10 +58,16 @@ private:
 	UInputAction* Inventory;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
-	UInputAction* Attack;
+	UInputAction* Use;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* Drop;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* HotbarSlot1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* HotbarSlot2;
 
 public:
 	
