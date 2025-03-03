@@ -22,6 +22,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* MeshComponent;
 
+	// Temoporal
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
+	TSubclassOf<UBaseItem> ItemClass;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 	UBaseItem* Item;
 
@@ -43,6 +47,6 @@ public:
 
 	static AWorldItem* SpawnItemInWorld(UObject* WorldContextObject, UBaseItem* Item, FVector Location, FRotator Rotation);
 
-	//void UpdateItemVisuals();
+	void UpdateItemVisuals();
 
 };

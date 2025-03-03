@@ -4,6 +4,7 @@
 #include "ToolItem.h"
 #include "SurviveIt/Interfaces/InventoryHandler.h"
 #include "SurviveIt/Character/PlayerCharacter.h"
+#include "SurviveIt/Resources/ResourceNode.h"
 
 UToolItem::UToolItem()
 {
@@ -73,9 +74,28 @@ bool UToolItem::Repair(float Amount)
 	return true;
 }
 
-bool UToolItem::UseToolOn(AActor* Target)
+//bool UToolItem::UseToolOn(AActor* Target)
+//{
+//
+//	reutn false;
+//}
+
+bool UToolItem::Use(AActor* User)
 {
-	if (!Target || IsBroken() || !ToolData) return false;
+	APlayerCharacter* Character = Cast<APlayerCharacter>(User);
+
+	if (IsBroken() || !ToolData || !Character) return false;
+
+	FVector Start = Character->GetActorLocation();
+	FVector End = Start + (Character->GetActorForwardVector() * 200.0f);
+
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(Character);
+
+	AActor* Target = HitResult.GetActor();
+
+	if (!Target) return false;
 
 	bool bEffective = false;
 
@@ -91,24 +111,12 @@ bool UToolItem::UseToolOn(AActor* Target)
 	float DurabilityReduction = bEffective ? 1.f : 2.f;
 	ReduceDurability(DurabilityReduction);
 
-	// TODO
-	// Function on target for Resources Mining etc.
-
-	return true;
-
-}
-
-bool UToolItem::Use(AActor* User)
-{
-	APlayerCharacter* Character = Cast<APlayerCharacter>(User);
-	if (!Character) return false;
-	
-	// WORK ON
+	AResourceNode* Node = Cast<AResourceNode>(Target);
+	if (Node)
+	{
+		Node->Harvest(ToolData->ToolType, ToolData->Damage);
+		return true;
+	}
 
 	return false;
 }
-
-//bool AToolItem::TryAddToInventory(IInventoryHandler* InventoryHandler)
-//{
-//    return InventoryHandler->AddToolToInventory(this) ? true : false;
-//}

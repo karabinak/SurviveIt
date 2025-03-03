@@ -7,7 +7,6 @@ UItemData::UItemData()
 	Name = FText::FromString("Item");
 	Description = FText::FromString("An item");
 	MaxStackSize = 1;
-	Value = 1;
 	ItemType = EItemType::EIT_Resources;
 }
 
@@ -114,6 +113,12 @@ bool UBaseItem::Use(AActor* User)
 bool UBaseItem::IsEmpty() const
 {
 	return Quantity <= 0;
+}
+
+bool UBaseItem::IsStackable() const
+{
+	if (ItemData == nullptr) return false;
+	return ItemData->MaxStackSize > 1;
 }
 
 /** xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */

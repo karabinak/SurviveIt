@@ -64,14 +64,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tool")
 	bool Repair(float Amount);
 
-	UFUNCTION(BlueprintCallable, Category = "Tool")
-	bool UseToolOn(AActor* Target);
+	//UFUNCTION(BlueprintCallable, Category = "Tool")
+	//bool UseToolOn(AActor* Target);
 
 	virtual bool Use(AActor* User) override;
 
 private:
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool", meta = (AllowPrivateAccess = "true"))
 	UToolData* ToolData;
 
 	UPROPERTY()

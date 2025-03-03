@@ -6,10 +6,12 @@
 #include "Blueprint/UserWidget.h"
 #include "InventoryWidget.generated.h"
 
-class UBorder;
-class UCanvasPanel;
-class UBaseItem;
+//class UBorder;
+//class UCanvasPanel;
+//class UBaseItem;
 class UItemWidget;
+class UInventoryComponent;
+class UGridPanel;
 
 UCLASS()
 class SURVIVEIT_API UInventoryWidget : public UUserWidget
@@ -18,9 +20,25 @@ class SURVIVEIT_API UInventoryWidget : public UUserWidget
 	
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void InitializeWidget(UInventoryComponent* InInventoryComponent);
 
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void RefreshGrid();
 
 protected:
+
+    UPROPERTY(BlueprintReadOnly, Category = "Inventory")
+    UInventoryComponent* InventoryComponent;
+
+	UPROPERTY(meta = (BindWidget))
+	UGridPanel* InventoryGrid;
+
+	//UPROPERTY(EditDefaultsOnly, Category = "Inventory")
+	//TSubclassOf<UItemWidget> ItemWidgetClass;
+
+	UFUNCTION()
+	void OnInventoryChanged();
 
 	//virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	//virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
@@ -28,17 +46,17 @@ protected:
 
 private:
 
-	UPROPERTY(meta = (BindWidget))
-	UBorder* InventoryBorder;
+	//UPROPERTY(meta = (BindWidget))
+	//UBorder* InventoryBorder;
 
-	UPROPERTY(meta = (BindWidget))
-	UCanvasPanel* InventoryCanvas;
+	//UPROPERTY(meta = (BindWidget))
+	//UCanvasPanel* InventoryCanvas;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> ItemWidgetClass;
+	//UPROPERTY(EditAnywhere)
+	//TSubclassOf<UUserWidget> ItemWidgetClass;
 
-	UPROPERTY(EditAnywhere)
-	TArray<UItemWidget*> ItemWidgetArray;
+	//UPROPERTY(EditAnywhere)
+	//TArray<UItemWidget*> ItemWidgetArray;
 
 public:
 

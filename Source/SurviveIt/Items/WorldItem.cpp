@@ -26,7 +26,14 @@ AWorldItem::AWorldItem()
 void AWorldItem::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	// Temporal
+	if (ItemClass)
+	{
+		Item = NewObject<UBaseItem>(this, ItemClass);
+		Initialize(Item);
+		UpdateItemVisuals();
+	}
 }
 
 void AWorldItem::Initialize(UBaseItem* InItem)
@@ -78,4 +85,19 @@ AWorldItem* AWorldItem::SpawnItemInWorld(UObject* WorldContextObject, UBaseItem*
 	}
 
 	return WorldItem;
+}
+
+void AWorldItem::UpdateItemVisuals()
+{
+	if (Item && Item->GetItemData())
+	{
+		if (Item->GetItemData()->WorldMesh)
+		{
+			MeshComponent->SetStaticMesh(Item->GetItemData()->WorldMesh);
+		}
+
+		float Scale = FMath::Max(1.0f, (float)Item->GetQuantity() / 10.0f);
+		Scale = FMath::Min(Scale, 2.0f);
+		SetActorScale3D(FVector(Scale));
+	}
 }

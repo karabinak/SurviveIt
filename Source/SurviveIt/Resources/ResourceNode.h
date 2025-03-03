@@ -57,7 +57,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UParticleSystem* HarvestEffects;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Harvesting")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Harvesting")
 	EToolType RequiredToolType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Harvesting")

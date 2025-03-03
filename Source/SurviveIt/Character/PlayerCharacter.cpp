@@ -98,6 +98,7 @@ bool APlayerCharacter::TryPickupItem()
             {
                 if (InventoryComponent->AddItem(Item))
                 {
+					UE_LOG(LogTemp, Warning, TEXT("Added"));
                     WorldItem->OnPickup();
                     return true;
                 }
