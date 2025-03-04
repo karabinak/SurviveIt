@@ -29,6 +29,7 @@ void UInventorySlotWidget::SetSlotData(int32 InX, int32 InY, UBaseItem* InItem)
         }
         else if (QuantityText)
         {
+
             QuantityText->SetVisibility(ESlateVisibility::Collapsed);
         }
     }
@@ -58,6 +59,7 @@ UBaseItem* UInventorySlotWidget::GetItem() const
 {
     return Item;
 }
+
 
 FReply UInventorySlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {

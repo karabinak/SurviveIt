@@ -93,8 +93,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void ClearInventory();
 
+
+
 protected:
 
+	/*  WIDGETS  */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Widgets")
+	UInventoryWidget* InventoryWidget;
+
+	UPROPERTY(VisibleAnywhere)
 	TArray<FInventorySlot> InventorySlots;
 
 	virtual void BeginPlay() override;

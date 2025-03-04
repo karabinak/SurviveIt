@@ -48,8 +48,7 @@ void UHotbarWidget::OnHotbarSlotSelected(int32 SlotIndex)
 	{
 		if (UInventorySlotWidget* SlotWidget = Cast<UInventorySlotWidget>(HotbarBox->GetChildAt(i)))
 		{
-			// Update Visual in 
-			// SlotWidget->SetSelected(i == SlotIndex);
+			//SlotWidget->SetSelevted(i == SlotIndex);
 		}
 	}
 }

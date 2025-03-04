@@ -55,40 +55,4 @@ protected:
 	//virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	//virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
-//protected:
-//
-//	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-//	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent);
-//
-//private:
-//
-//	UPROPERTY(meta = (BindWidget))
-//	UCanvasPanel* ItemCanvasPanel;
-//
-//	UPROPERTY(meta = (BindWidget))
-//	USizeBox* ItemSizeBox;
-//
-//	UPROPERTY(meta = (BindWidget))
-//	UBorder* ItemBorder;
-//
-//	UPROPERTY(meta = (BindWidget))
-//	UImage* ItemIcon;
-//
-//	UPROPERTY(meta = (BindWidget))
-//	UTextBlock* QuantityText;
-//
-//	UPROPERTY(EditAnywhere)
-//	TSubclassOf<UUserWidget> DragVisualClass;
-//
-//	UPROPERTY()
-//	UBaseItem* ItemData;
-//
-//public:
-//
-//	void InitializeItemProperties(UBaseItem* Item);
-//
-//	void UpdateProperties(UBaseItem* Item);
-//
-//	void SetItemBase(UBaseItem* Item) { ItemData = Item; }
-
 };

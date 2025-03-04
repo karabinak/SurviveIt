@@ -10,6 +10,7 @@
 //class UCanvasPanel;
 //class UBaseItem;
 class UItemWidget;
+class UInventorySlotWidget;
 class UInventoryComponent;
 class UGridPanel;
 
@@ -26,6 +27,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void RefreshGrid();
 
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void ToggleInventory();
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void ShowInventory();
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void HideInventory();
+
 protected:
 
     UPROPERTY(BlueprintReadOnly, Category = "Inventory")
@@ -34,8 +44,8 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UGridPanel* InventoryGrid;
 
-	//UPROPERTY(EditDefaultsOnly, Category = "Inventory")
-	//TSubclassOf<UItemWidget> ItemWidgetClass;
+	UPROPERTY(EditDefaultsOnly, Category = "Inventory")
+	TSubclassOf<UInventorySlotWidget> InventorySlotItem;
 
 	UFUNCTION()
 	void OnInventoryChanged();
