@@ -61,6 +61,12 @@ UBaseItem* UInventorySlotWidget::GetItem() const
     return Item;
 }
 
+void UInventorySlotWidget::SetQuantityText(int32 InQuantity)
+{
+    QuantityText->SetText(FText::AsNumber(Item->GetQuantity()));
+    QuantityText->SetVisibility(ESlateVisibility::Visible);
+}
+
 
 FReply UInventorySlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {

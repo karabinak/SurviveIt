@@ -48,7 +48,7 @@ bool UInventoryComponent::AddItemAt(UBaseItem* Item, int32 Column, int32 Row)
 bool UInventoryComponent::AddItem(UBaseItem* Item)
 {
 	if (!Item || Item->IsEmpty()) return false;
-	//if (TryStackItem(Item) && Item->IsEmpty()) return true;
+	if (TryStackItem(Item) && Item->IsEmpty()) return true;
 
 	// If we couldn't stack or there's still quantity left, find a position
 	int32 FoundColumn = 0;
@@ -65,7 +65,7 @@ bool UInventoryComponent::AddItem(UBaseItem* Item)
 
 bool UInventoryComponent::TryStackItem(UBaseItem* Item)
 {
-	if (!Item && !Item->GetItemData()) return false;
+	if (!Item || !Item->GetItemData()) return false;
 
 	TArray<UBaseItem*> ExistingItems = GetAllItems();
 	for (UBaseItem* ExistingItem : ExistingItems)
@@ -74,7 +74,6 @@ bool UInventoryComponent::TryStackItem(UBaseItem* Item)
 		{
 			int32 TransferredAmount = ExistingItem->TryStackWith(Item);
 			//OnInventoryChanged.Broadcast();
-
 			OnQuantityChanged.Broadcast(ExistingItem);
 
 			if (Item->IsEmpty())

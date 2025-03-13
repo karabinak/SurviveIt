@@ -32,8 +32,8 @@ void UInventoryWidget::DelayedInitialize()
 	if (!InventoryComponent) return;
 
 	InventoryComponent->OnItemAdded.AddDynamic(this, &UInventoryWidget::OnItemAdded);
+	InventoryComponent->OnQuantityChanged.AddDynamic(this, &UInventoryWidget::OnQuantityChanged);
 	//InventoryComponent->OnItemRemoved.AddDynamic(this, &UInventoryWidget::OnItemRemoved);
-	//InventoryComponent->OnQuantityChanged.AddDynamic(this, &UInventoryWidget::OnQuantityChanged);
 	//InventoryComponent->OnItemMoved.AddDynamic(this, &UInventoryWidget::OnItemMoved);
 	//InventoryComponent->OnInventoryCleared.AddDynamic(this, &UInventoryWidget::OnInventoryCleared);
 
@@ -70,6 +70,19 @@ void UInventoryWidget::OnItemAdded(UBaseItem* Item, FIntPoint SlotDimension)
 		UE_LOG(LogTemp, Warning, TEXT("Position %f, %f"), SlotDimension.X * TileSize, SlotDimension.Y * TileSize);
 
 		SlotWidgets.Add(ItemWidget);
+	}
+}
+
+void UInventoryWidget::OnQuantityChanged(UBaseItem* Item)
+{
+	for (UInventorySlotWidget* ItemWidget : SlotWidgets)
+	{
+		if (ItemWidget->GetItem() == Item)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Found"));
+			ItemWidget->SetQuantityText(Item->GetQuantity());
+			return;
+		}
 	}
 }
 

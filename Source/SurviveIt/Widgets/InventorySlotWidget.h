@@ -28,6 +28,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Inventory")
 	UBaseItem* GetItem() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void SetQuantityText(int32 InQuantity);
+
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
 	int32 SlotX;

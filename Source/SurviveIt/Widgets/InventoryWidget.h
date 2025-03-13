@@ -76,12 +76,12 @@ protected:
 	UFUNCTION()
 	void OnItemAdded(UBaseItem* Item, FIntPoint SlotDimension);
 
+	UFUNCTION()
+	void OnQuantityChanged(UBaseItem* Item);
+
 	//UFUNCTION()
 	//void OnItemRemoved(UBaseItem* Item);
 
-	//UFUNCTION()
-	//void OnQuantityChanged(UBaseItem* Item);
-	//
 	//UFUNCTION()
 	//void OnItemMoved(UBaseItem* Item);
 
@@ -99,7 +99,7 @@ private:
 	UPROPERTY()
 	TArray<UInventorySlotWidget*> SlotWidgets;
 
-	UInventorySlotWidget* FindSlotWidgetAt(int32 Column, int32 Row);
+	//UInventorySlotWidget* FindSlotWidgetAt(int32 Column, int32 Row);
 
 
 
