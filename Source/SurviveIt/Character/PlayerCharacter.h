@@ -50,9 +50,6 @@ public:
 	UHotbarComponent* GetHotbarComponent() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void ToggleInventory();
-
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool TryPickupItem();
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
@@ -63,7 +60,7 @@ public:
 	void SelectHotbarSlot(int32 SlotIndex);
 
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	AActor* GetLookAtActor(float MaxDistance = 300.f);
+	AActor* GetLookAtActor(float MaxDistance = 800.f);
 
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	bool TryHarvest();

@@ -3,49 +3,44 @@
 #include "InventoryComponent.h"
 
 #include "SurviveIt/Items/BaseItem.h"
+#include "SurviveIt/Widgets/PlayerHUD.h"
+#include "Kismet/GameplayStatics.h"
 //#include "SurviveIt/Items/ToolItem.h"
 //#include "SurviveIt/Items/ResourceItem.h"
-#include "SurviveIt/Widgets/InventoryWidget.h"
+//#include "SurviveIt/Widgets/InventoryWidget.h"
 
 UInventoryComponent::UInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	InventoryWidth = 5; // X
-	InventoryHeight = 10; // Y
+	InventoryWidth = 10; // Column
+	InventoryHeight = 5; // Row
 }
 
-void UInventoryComponent::Initialize(int32 Width, int32 Height)
+bool UInventoryComponent::IsValidPosition(int32 Column, int32 Row) const
 {
-	InventoryWidth = FMath::Max(1, Width);
-	InventoryHeight = FMath::Max(1, Height);
-
-	InitializeGrid();
+	return Column >= 0 && Column < InventoryWidth && Row >= 0 && Row < InventoryHeight;
 }
 
-bool UInventoryComponent::IsValidPosition(int32 X, int32 Y) const
+bool UInventoryComponent::CanItemFitAt(UBaseItem* Item, int32 Column, int32 Row) const
 {
-	return X >= 0 && X < InventoryWidth && Y >= 0 && Y < InventoryHeight;
-}
-
-bool UInventoryComponent::CanItemFitAt(UBaseItem* Item, int32 X, int32 Y) const
-{
-	if (!Item && !Item->GetItemData()) return false;
+	if (!Item || !Item->GetItemData()) return false;
 
 	int32 ItemWidth = Item->GetItemData()->Width;
 	int32 ItemHeight = Item->GetItemData()->Height;
 
-	if (X < 0 || Y < 0 || X + ItemWidth > InventoryWidth || Y + ItemHeight > InventoryHeight) return false;
+	if (Column < 0 || Row < 0 || Column + ItemWidth > InventoryWidth || Row + ItemHeight > InventoryHeight) return false;
 
-	return AreItemSlotsEmpty(Item, X, Y);
+	return AreItemSlotsEmpty(Item, Column, Row);
 }
 
-bool UInventoryComponent::AddItemAt(UBaseItem* Item, int32 X, int32 Y)
+bool UInventoryComponent::AddItemAt(UBaseItem* Item, int32 Column, int32 Row)
 {
-	if (!Item || Item->IsEmpty() || !CanItemFitAt(Item, X, Y)) return false;
+	if (!Item || Item->IsEmpty() || !CanItemFitAt(Item, Column, Row)) return false;
 
-	SetItemSlots(Item, X, Y);
-	OnInventoryChanged.Broadcast();
+	SetItemSlots(Item, Column, Row);
+	//OnInventoryChanged.Broadcast();
+	OnItemAdded.Broadcast(Item, FIntPoint(Column, Row));
 
 	return true;
 }
@@ -53,15 +48,16 @@ bool UInventoryComponent::AddItemAt(UBaseItem* Item, int32 X, int32 Y)
 bool UInventoryComponent::AddItem(UBaseItem* Item)
 {
 	if (!Item || Item->IsEmpty()) return false;
-	if (TryStackItem(Item) && Item->IsEmpty()) return true;
+	//if (TryStackItem(Item) && Item->IsEmpty()) return true;
 
 	// If we couldn't stack or there's still quantity left, find a position
-	int32 FoundX = 0;
-	int32 FoundY = 0;
+	int32 FoundColumn = 0;
+	int32 FoundRow = 0;
 
-	if (FindFirstFitPosition(Item, FoundX, FoundY))
+	if (FindFirstFitPosition(Item, FoundColumn, FoundRow))
 	{
-		return AddItemAt(Item, FoundX, FoundY);
+		UE_LOG(LogTemp, Warning, TEXT("Col %i, Row %i"), FoundColumn, FoundRow);
+		return AddItemAt(Item, FoundColumn, FoundRow);
 	}
 
 	return false;
@@ -77,7 +73,9 @@ bool UInventoryComponent::TryStackItem(UBaseItem* Item)
 		if (Item->CanStackWith(ExistingItem))
 		{
 			int32 TransferredAmount = ExistingItem->TryStackWith(Item);
-			OnInventoryChanged.Broadcast();
+			//OnInventoryChanged.Broadcast();
+
+			OnQuantityChanged.Broadcast(ExistingItem);
 
 			if (Item->IsEmpty())
 			{
@@ -89,44 +87,46 @@ bool UInventoryComponent::TryStackItem(UBaseItem* Item)
 	return Item->IsEmpty();
 }
 
-UBaseItem* UInventoryComponent::RemoveItemAt(int32 X, int32 Y)
+UBaseItem* UInventoryComponent::RemoveItemAt(int32 Column, int32 Row)
 {
-	if (!IsValidPosition(X, Y)) return nullptr;
+	if (!IsValidPosition(Column, Row)) return nullptr;
 
-	UBaseItem* Item = GetItemAt(X, Y);
+	UBaseItem* Item = GetItemAt(Column, Row);
 	if (Item)
 	{
 		ClearItemSlots(Item);
 
-		OnInventoryChanged.Broadcast();
+		//OnInventoryChanged.Broadcast();
+		OnItemRemoved.Broadcast(Item);
 	}
 
 	return Item;
 }
 
-UBaseItem* UInventoryComponent::GetItemAt(int32 X, int32 Y) const
+UBaseItem* UInventoryComponent::GetItemAt(int32 Column, int32 Row) const
 {
-	if (!IsValidPosition(X, Y)) return nullptr;
+	if (!IsValidPosition(Column, Row)) return nullptr;
 
-	int32 Index = GetSlotIndex(X, Y);
+	int32 Index = GetSlotIndex(Column, Row);
 	return InventorySlots[Index].Item;
 }
 
-bool UInventoryComponent::MoveItem(int32 FromX, int32 FromY, int32 ToX, int32 ToY)
+bool UInventoryComponent::MoveItem(int32 FromColumn, int32 FromRow, int32 ToColumn, int32 ToRow)
 {
-	UBaseItem* Item = GetItemAt(FromX, FromY);
+	UBaseItem* Item = GetItemAt(FromColumn, FromRow);
 	if (!Item) return false;
 
 	ClearItemSlots(Item);
 
-	if (!CanItemFitAt(Item, ToX, ToY))
+	if (!CanItemFitAt(Item, ToColumn, ToRow))
 	{
-		SetItemSlots(Item, FromX, FromY);
+		SetItemSlots(Item, FromColumn, FromRow);
 		return false;
 	}
 
-	SetItemSlots(Item, ToX, ToY);
-	OnInventoryChanged.Broadcast();
+	SetItemSlots(Item, ToColumn, ToRow);
+	//OnInventoryChanged.Broadcast();
+	OnItemMoved.Broadcast(Item);
 
 	return true;
 }
@@ -172,40 +172,39 @@ void UInventoryComponent::ClearInventory()
 		Slot.Item = nullptr;
 	}
 
-	OnInventoryChanged.Broadcast();
+	//OnInventoryChanged.Broadcast();
+	OnInventoryCleared.Broadcast();
 }
 
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitializeGrid();
+	Initialize();
 }
 
-void UInventoryComponent::InitializeGrid()
+void UInventoryComponent::Initialize()
 {
 	InventorySlots.Empty();
 	InventorySlots.SetNum(InventoryWidth * InventoryHeight);
 
-	for (int32 Y = 0; Y < InventoryHeight; Y++)
+	for (int32 Row = 0; Row < InventoryHeight; Row++)
 	{
-		for (int32 X = 0; X < InventoryWidth; X++)
+		for (int32 Column = 0; Column < InventoryWidth; Column++)
 		{
-			int32 Index = GetSlotIndex(X, Y);
-			InventorySlots[Index] = FInventorySlot(X, Y);
+			int32 Index = GetSlotIndex(Column, Row);
+			InventorySlots[Index] = FInventorySlot(Column, Row);
 		}
 	}
 
-	if (InventoryWidgetClass)
+	APlayerHUD* HUD = Cast<APlayerHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (HUD)
 	{
-		InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
-		InventoryWidget->InitializeWidget(this);
-		InventoryWidget->ToggleInventory();
-		InventoryWidget->AddToViewport();
+		HUD->CreateInventoryWidget(this);
 	}
 }
 
-bool UInventoryComponent::AreItemSlotsEmpty(UBaseItem* Item, int32 StartX, int32 StartY) const
+bool UInventoryComponent::AreItemSlotsEmpty(UBaseItem* Item, int32 StartColumn, int32 StartRow) const
 {
 	// Checked in CanItemFitAt
 	// if (!Item && !Item->GetItemData()) return false;
@@ -213,41 +212,39 @@ bool UInventoryComponent::AreItemSlotsEmpty(UBaseItem* Item, int32 StartX, int32
 	int32 ItemWidth = Item->GetItemData()->Width;
 	int32 ItemHeight = Item->GetItemData()->Height;
 
-	for (int32 Y = 0; Y < ItemHeight; Y++)
+	for (int32 Row = 0; Row < ItemHeight; Row++)
 	{
-		for (int32 X = 0; X < ItemWidth; X++)
+		for (int32 Column = 0; Column < ItemWidth; Column++)
 		{
-			if (!IsValidPosition(X, Y) || GetItemAt(X, Y) != nullptr)
+			if (!IsValidPosition(Column + StartColumn, Row + StartRow) || GetItemAt(Column + StartColumn, Row + StartRow) != nullptr)
 			{
 				return false;
 			}
 		}
 	}
-
 	return true;
 }
 
-int32 UInventoryComponent::GetSlotIndex(int32 X, int32 Y) const
+int32 UInventoryComponent::GetSlotIndex(int32 Column, int32 Row) const
 {
-	return Y * InventoryWidth + X;
+	return Row * InventoryWidth + Column;
 }
 
-void UInventoryComponent::SetItemSlots(UBaseItem* Item, int32 StartX, int32 StartY)
+void UInventoryComponent::SetItemSlots(UBaseItem* Item, int32 StartColumn, int32 StartRow)
 {
 	if (!Item || !Item->GetItemData()) return;
 
 	int32 ItemWidth = Item->GetItemData()->Width;
 	int32 ItemHeight = Item->GetItemData()->Height;
 
-	for (int32 Y = StartY; Y < StartY + ItemHeight; Y++)
+	for (int32 Row = StartRow; Row < StartRow + ItemHeight; Row++)
 	{
-		for (int32 X = StartX; X < StartX + ItemWidth; X++)
+		for (int32 Column = StartColumn; Column < StartColumn + ItemWidth; Column++)
 		{
-			if (IsValidPosition(X, Y))
+			if (IsValidPosition(Column, Row))
 			{
-				int32 Index = GetSlotIndex(X, Y);
+				int32 Index = GetSlotIndex(Column, Row);
 				InventorySlots[Index].Item = Item;
-
 			}
 		}
 	}
@@ -266,22 +263,23 @@ void UInventoryComponent::ClearItemSlots(UBaseItem* Item)
 	}
 }
 
-bool UInventoryComponent::FindFirstFitPosition(UBaseItem* Item, int32& OutX, int32& OutY) const
+bool UInventoryComponent::FindFirstFitPosition(UBaseItem* Item, int32& OutColumn, int32& OutRow) const
 {
 	if (!Item || !Item->GetItemData()) return false;
 
-	for (int32 X = 0; X < InventoryWidth; X++)
+	for (int32 Column = 0; Column < InventoryWidth; Column++)
 	{
-		for (int32 Y = 0; Y < InventoryHeight; Y++)
+		for (int32 Row = 0; Row < InventoryHeight; Row++)
 		{
-			if (CanItemFitAt(Item, X, Y))
+			if (CanItemFitAt(Item, Column, Row))
 			{
-				OutX = X;
-				OutY = Y;
+				OutColumn = Column;
+				OutRow = Row;
 				return true;
 			}
 		}
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("All Reserved"));
 	return false;
 }

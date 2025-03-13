@@ -3,6 +3,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Components/Border.h"
+#include "Components/SizeBox.h"
 #include "Blueprint/DragDropOperation.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 

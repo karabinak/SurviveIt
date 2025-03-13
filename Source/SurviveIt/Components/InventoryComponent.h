@@ -8,7 +8,13 @@
 #include "SurviveIt/Interfaces/InventoryHandler.h"
 #include "InventoryComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryChanged);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryCleared);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemAdded, UBaseItem*, Item, FIntPoint, ItemDiemansion);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemoved, UBaseItem*, Item);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuantityChanged, UBaseItem*, Item);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemMoved, UBaseItem*, Item);
+
 
 class UInventoryWidget;
 //class AToolItem;
@@ -21,22 +27,22 @@ struct FInventorySlot
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 X;
+	int32 Column;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Y;
+	int32 Row;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UBaseItem* Item;
 
-	FInventorySlot() : X(0), Y(0), Item(nullptr) {}
+	FInventorySlot() : Column(0), Row(0), Item(nullptr) {}
 
-	FInventorySlot(int32 InX, int32 InY) : X(InX), Y(InY), Item(nullptr) {}
+	FInventorySlot(int32 InColumn, int32 InRow) : Column(InColumn), Row(InRow), Item(nullptr) {}
 
-	bool operator == (const FInventorySlot & Other) const
-	{
-		return X == Other.X && Y == Other.Y;
-	}
+	//bool operator == (const FInventorySlot & Other) const
+	//{
+	//	return Column == Other.Column && Row == Other.Row;
+	//}
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -47,6 +53,25 @@ class SURVIVEIT_API UInventoryComponent : public UActorComponent, public IInvent
 public:	
 	UInventoryComponent();
 
+	/** DELEGATES */
+
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	FOnItemAdded OnItemAdded;
+
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	FOnItemRemoved OnItemRemoved;
+
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	FOnQuantityChanged OnQuantityChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	FOnItemMoved OnItemMoved;
+
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	FOnInventoryCleared OnInventoryCleared;
+
+	/** DELEGATES */
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory")
 	int32 InventoryWidth;
@@ -54,20 +79,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory")
 	int32 InventoryHeight;
 
-	UPROPERTY(BlueprintAssignable, Category = "Inventory")
-	FOnInventoryChanged OnInventoryChanged;
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void Initialize(int32 Width, int32 Height);
+	bool IsValidPosition(int32 Column, int32 Row) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	bool IsValidPosition(int32 X, int32 Y) const;
+	bool CanItemFitAt(UBaseItem* Item, int32 Column, int32 Row) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	bool CanItemFitAt(UBaseItem* Item, int32 X, int32 Y) const;
-
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	bool AddItemAt(UBaseItem* Item, int32 X, int32 Y);
+	bool AddItemAt(UBaseItem* Item, int32 Column, int32 Row);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool AddItem(UBaseItem* Item);
@@ -76,13 +96,13 @@ public:
 	bool TryStackItem(UBaseItem* Item);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	UBaseItem* RemoveItemAt(int32 X, int32 Y);
+	UBaseItem* RemoveItemAt(int32 Column, int32 Row);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	UBaseItem* GetItemAt(int32 X, int32 Y) const;
+	UBaseItem* GetItemAt(int32 Column, int32 Row) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	bool MoveItem(int32 FromX, int32 FromY, int32 ToX, int32 ToY);
+	bool MoveItem(int32 FromColumn, int32 FromRow, int32 ToColumn, int32 ToRow);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	TArray<UBaseItem*> GetAllItems() const;
@@ -93,32 +113,30 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void ClearInventory();
 
-
-
 protected:
 
 	/*  WIDGETS  */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
-	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	//TSubclassOf<UInventoryWidget> InventoryWidgetClass;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Widgets")
-	UInventoryWidget* InventoryWidget;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Widgets")
+	//UInventoryWidget* InventoryWidget;
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<FInventorySlot> InventorySlots;
 
 	virtual void BeginPlay() override;
 
-	void InitializeGrid();
+	void Initialize();
 
-	bool AreItemSlotsEmpty(UBaseItem* Item, int32 StartX, int32 StartY) const;
+	bool AreItemSlotsEmpty(UBaseItem* Item, int32 StartColumn, int32 StartRow) const;
 
-	int32 GetSlotIndex(int32 X, int32 Y) const;
+	int32 GetSlotIndex(int32 Column, int32 Row) const;
 
-	void SetItemSlots(UBaseItem* Item, int32 StartX, int32 StartY);
+	void SetItemSlots(UBaseItem* Item, int32 StartColumn, int32 StartRow);
 
 	void ClearItemSlots(UBaseItem* Item);
 
-	bool FindFirstFitPosition(UBaseItem* Item, int32& OutX, int32& OutY) const;
+	bool FindFirstFitPosition(UBaseItem* Item, int32& OutColumn, int32& OutRow) const;
 
 };

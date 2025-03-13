@@ -2,8 +2,10 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "SurviveIt/Character/PlayerCharacter.h"
+#include "SurviveIt/Widgets/PlayerHUD.h"
 
 ASurvivalController::ASurvivalController()
 {
@@ -83,10 +85,17 @@ void ASurvivalController::OnInteractTriggered(const FInputActionValue& Value)
 
 void ASurvivalController::OnToggleInventory(const FInputActionValue& Value)
 {
-	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
-	if (PlayerCharacter)
+	APlayerHUD* HUD = Cast<APlayerHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (HUD)
 	{
-		PlayerCharacter->ToggleInventory();
+		if (HUD->ToogleInventory())
+		{
+			SetShowMouseCursor(true);
+		}
+		else
+		{
+			SetShowMouseCursor(true);
+		}
 	}
 }
 

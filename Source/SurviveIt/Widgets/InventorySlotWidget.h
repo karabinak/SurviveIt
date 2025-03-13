@@ -39,6 +39,9 @@ protected:
 	UBaseItem* Item;
 
 	UPROPERTY(meta = (BindWidget))
+	USizeBox* SlotSizeBox;
+
+	UPROPERTY(meta = (BindWidget))
 	UImage* ItemIcon;
 
 	UPROPERTY(meta = (BindWidget))

@@ -4,6 +4,7 @@
 //#include "GameFramework/SpringArmComponent.h"
 //#include "Blueprint/UserWidget.h"
 
+
 #include "SurviveIt/Components/InventoryComponent.h"
 #include "SurviveIt/Components/HotbarComponent.h"
 //#include "SurviveIt/Interfaces/Tool.h"
@@ -25,7 +26,7 @@ APlayerCharacter::APlayerCharacter()
 
 	Camera->SetupAttachment(GetMesh(), FName(TEXT("head")));
 
-	InteractionDistance = 200.f;
+	InteractionDistance = 800.f;
 }
 
 void APlayerCharacter::BeginPlay()
@@ -33,7 +34,7 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	// Inventory size
-	InventoryComponent->Initialize(10, 5);
+	//InventoryComponent->Initialize();
 
 	HotbarComponent->Initialize(10);
 	
@@ -59,15 +60,6 @@ UInventoryComponent* APlayerCharacter::GetInventoryComponent() const
 UHotbarComponent* APlayerCharacter::GetHotbarComponent() const
 {
 	return HotbarComponent;
-}
-
-void APlayerCharacter::ToggleInventory()
-{
-	/* TODO
-	
-		Create HUD
-		HUD->ToggleInventoryUI();
-	*/
 }
 
 bool APlayerCharacter::TryPickupItem()
@@ -98,7 +90,6 @@ bool APlayerCharacter::TryPickupItem()
             {
                 if (InventoryComponent->AddItem(Item))
                 {
-					UE_LOG(LogTemp, Warning, TEXT("Added"));
                     WorldItem->OnPickup();
                     return true;
                 }
@@ -130,7 +121,7 @@ bool APlayerCharacter::DropItemFromInventory(UBaseItem* Item, int32 Quantity)
 		TArray<FInventorySlot> ItemSlots = InventoryComponent->GetItemSlots(Item);
 		if (ItemSlots.Num() > 0)
 		{
-			DroppedItem = InventoryComponent->RemoveItemAt(ItemSlots[0].X, ItemSlots[0].Y);
+			DroppedItem = InventoryComponent->RemoveItemAt(ItemSlots[0].Column, ItemSlots[0].Row);
 		}
 	}
 
