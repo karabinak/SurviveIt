@@ -112,8 +112,6 @@ UBaseItem* UInventoryComponent::GetItemAt(int32 Column, int32 Row) const
 
 bool UInventoryComponent::MoveItem(int32 FromColumn, int32 FromRow, int32 ToColumn, int32 ToRow)
 {
-	UE_LOG(LogTemp, Warning, TEXT("MoveItem Function"));
-
 	UBaseItem* Item = GetItemAt(FromColumn, FromRow);
 	if (!Item) return false;
 
@@ -121,14 +119,11 @@ bool UInventoryComponent::MoveItem(int32 FromColumn, int32 FromRow, int32 ToColu
 
 	if (!CanItemFitAt(Item, ToColumn, ToRow))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Can't Move"));
 		SetItemSlots(Item, FromColumn, FromRow);
 		return false;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Can Move"));
 	SetItemSlots(Item, ToColumn, ToRow);
-	//OnInventoryChanged.Broadcast();
 	OnItemMoved.Broadcast(Item, FIntPoint(ToColumn, ToRow));
 
 	return true;

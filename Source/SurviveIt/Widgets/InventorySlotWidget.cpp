@@ -2,7 +2,7 @@
 #include "InventorySlotWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
-#include "Components/Border.h"
+//#include "Components/Border.h"
 #include "Components/SizeBox.h"
 #include "Blueprint/DragDropOperation.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
@@ -26,8 +26,11 @@ void UInventorySlotWidget::SetSlotData(int32 InColumn, int32 InRow, UBaseItem* I
     if (Item && ItemIcon)
     {
         ItemIcon->SetBrushFromTexture(Item->GetItemData()->Icon);
-        SlotSizeBox->SetWidthOverride(Item->GetItemData()->Width * TileSize);
-        SlotSizeBox->SetHeightOverride(Item->GetItemData()->Height * TileSize);
+
+        const float ItemWidth = Item->GetItemData()->Width * TileSize;
+        const float ItemHeight = Item->GetItemData()->Height * TileSize;
+        SlotSizeBox->SetWidthOverride(ItemWidth);
+        SlotSizeBox->SetHeightOverride(ItemHeight);
 
         if (Item->IsStackable() && QuantityText)
         {
@@ -36,7 +39,6 @@ void UInventorySlotWidget::SetSlotData(int32 InColumn, int32 InRow, UBaseItem* I
         }
         else if (QuantityText)
         {
-
             QuantityText->SetVisibility(ESlateVisibility::Collapsed);
         }
     }
@@ -111,6 +113,5 @@ bool UInventorySlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDrag
     UInventoryComponent* InventoryComp = Character->GetInventoryComponent();
     if (!InventoryComp) return false;
 
-    UE_LOG(LogTemp, Warning, TEXT("NativeOnDrop"));
     return InventoryComp->MoveItem(InventoryDragDrop->SourceSlotX, InventoryDragDrop->SourceSlotY, SlotColumn, SlotRow);
 }

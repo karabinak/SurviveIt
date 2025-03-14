@@ -8,9 +8,9 @@
 
 class UBaseItem;
 class UImage;
-class UCanvasPanel;
+//class UCanvasPanel;
 class USizeBox;
-class UBorder;
+//class UBorder;
 class UTextBlock;
 
 UCLASS()
