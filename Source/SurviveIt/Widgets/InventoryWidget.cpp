@@ -34,7 +34,7 @@ void UInventoryWidget::DelayedInitialize()
 	InventoryComponent->OnItemAdded.AddDynamic(this, &UInventoryWidget::OnItemAdded);
 	InventoryComponent->OnQuantityChanged.AddDynamic(this, &UInventoryWidget::OnQuantityChanged);
 	//InventoryComponent->OnItemRemoved.AddDynamic(this, &UInventoryWidget::OnItemRemoved);
-	//InventoryComponent->OnItemMoved.AddDynamic(this, &UInventoryWidget::OnItemMoved);
+	InventoryComponent->OnItemMoved.AddDynamic(this, &UInventoryWidget::OnItemMoved);
 	//InventoryComponent->OnInventoryCleared.AddDynamic(this, &UInventoryWidget::OnInventoryCleared);
 
 	if (UCanvasPanelSlot* CanvasPanelSlot = Cast<UCanvasPanelSlot>(InventoryBorder->Slot))
@@ -44,24 +44,40 @@ void UInventoryWidget::DelayedInitialize()
 		float GridSizeX = InventoryComponent->InventoryWidth * TileSize;
 		float GridSizeY = InventoryComponent->InventoryHeight * TileSize;
 		CanvasPanelSlot->SetSize(FVector2D(GridSizeX, GridSizeY));
+	}
 
-		UE_LOG(LogTemp, Warning, TEXT("Inventory Section Size: %f"), InventorySection->GetCachedGeometry().GetLocalSize().X);
-		UE_LOG(LogTemp, Warning, TEXT("Inventory Width: %i"), InventoryComponent->InventoryWidth);
-		UE_LOG(LogTemp, Warning, TEXT("Tile Size: %f"), TileSize);
-		UE_LOG(LogTemp, Warning, TEXT("Grid Size Column: %f, Grid Size Row: %f"), GridSizeX, GridSizeY);
+	CreateEmptySlots();
+}
+
+void UInventoryWidget::CreateEmptySlots()
+{
+	for (int32 Row = 0; Row < InventoryComponent->InventoryHeight; Row++)
+	{
+		for (int Column = 0; Column < InventoryComponent->InventoryWidth; Column++)
+		{
+			if(UInventorySlotWidget* SlotWidget = CreateWidget<UInventorySlotWidget>(this, InventorySlotItem))
+			{
+				SlotWidget->SetSlotData(Column, Row, nullptr, TileSize);
+
+				UCanvasPanelSlot* CanvasSlot = InventoryCanvas->AddChildToCanvas(SlotWidget);
+				CanvasSlot->SetSize(FVector2D(TileSize));
+				CanvasSlot->SetPosition(FVector2D(Column, Row) * TileSize);
+
+				SlotWidgets.Add(SlotWidget);
+			}
+		}
 	}
 }
 
 void UInventoryWidget::OnItemAdded(UBaseItem* Item, FIntPoint SlotDimension)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnItemAdded InventoryWidget"));
 	if (!InventoryComponent) return;
 
 	if (UInventorySlotWidget* ItemWidget = CreateWidget<UInventorySlotWidget>(this, InventorySlotItem))
 	{
 		float ItemWidth = TileSize * Item->GetItemData()->Width;
 		float ItemHeight = TileSize * Item->GetItemData()->Height;
-		ItemWidget->SetSlotData(SlotDimension.X, SlotDimension.Y, Item);
+		ItemWidget->SetSlotData(SlotDimension.X, SlotDimension.Y, Item, TileSize);
 
 		UCanvasPanelSlot* CanvasSlot = InventoryCanvas->AddChildToCanvas(ItemWidget);
 		CanvasSlot->SetSize(FVector2D(ItemWidth, ItemHeight));
@@ -79,12 +95,32 @@ void UInventoryWidget::OnQuantityChanged(UBaseItem* Item)
 	{
 		if (ItemWidget->GetItem() == Item)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Found"));
+			//UE_LOG(LogTemp, Warning, TEXT("Found"));
 			ItemWidget->SetQuantityText(Item->GetQuantity());
 			return;
 		}
 	}
 }
+
+void UInventoryWidget::OnItemMoved(UBaseItem* Item, FIntPoint MoveDimension)
+{
+	for (UInventorySlotWidget* ItemWidget : SlotWidgets)
+	{
+		if (ItemWidget->GetItem() == Item)
+		{
+			int32 Column = 0;
+			int32 Row = 0;
+			ItemWidget->GetSlotPosition(Column, Row);
+
+			ItemWidget->SetSlotData(Column, Row, nullptr, TileSize);
+
+			OnItemAdded(Item, MoveDimension);
+			return;
+		}
+	}
+}
+
+
 
 //void UInventoryWidget::RefreshGrid()
 //{

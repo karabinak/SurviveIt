@@ -13,15 +13,21 @@
 #include "SurviveIt/Components/InventoryComponent.h"
 #include "InventoryDragDropOperation.h"
 
-void UInventorySlotWidget::SetSlotData(int32 InX, int32 InY, UBaseItem* InItem)
+void UInventorySlotWidget::SetSlotData(int32 InColumn, int32 InRow, UBaseItem* InItem, float InTileSize)
 {
-	SlotX = InX;
-	SlotY = InY;
+	SlotColumn = InColumn;
+	SlotRow = InRow;
 	Item = InItem;
+    TileSize = InTileSize;
+
+    SlotSizeBox->SetWidthOverride(TileSize);
+    SlotSizeBox->SetHeightOverride(TileSize);
 
     if (Item && ItemIcon)
     {
         ItemIcon->SetBrushFromTexture(Item->GetItemData()->Icon);
+        SlotSizeBox->SetWidthOverride(Item->GetItemData()->Width * TileSize);
+        SlotSizeBox->SetHeightOverride(Item->GetItemData()->Height * TileSize);
 
         if (Item->IsStackable() && QuantityText)
         {
@@ -50,10 +56,10 @@ void UInventorySlotWidget::SetSlotData(int32 InX, int32 InY, UBaseItem* InItem)
     UpdateVisuals();
 }
 
-void UInventorySlotWidget::GetSlotPosition(int32& OutX, int32& OutY) const
+void UInventorySlotWidget::GetSlotPosition(int32& OutColumn, int32& OutRow) const
 {
-    OutX = SlotX;
-    OutY = SlotY;
+    OutColumn = SlotColumn;
+    OutRow = SlotRow;
 }
 
 UBaseItem* UInventorySlotWidget::GetItem() const
@@ -84,11 +90,11 @@ void UInventorySlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, con
 
 	UInventoryDragDropOperation* DragDropOp = NewObject<UInventoryDragDropOperation>();
 	DragDropOp->SourceItem = Item;
-	DragDropOp->SourceSlotX = SlotX;
-	DragDropOp->SourceSlotY = SlotY;
+	DragDropOp->SourceSlotX = SlotColumn;
+	DragDropOp->SourceSlotY = SlotRow;
 
 	UInventorySlotWidget* DragVisual = CreateWidget<UInventorySlotWidget>(this, GetClass());
-	DragVisual->SetSlotData(SlotX, SlotY, Item);
+	DragVisual->SetSlotData(SlotColumn, SlotRow, Item, TileSize);
 	DragDropOp->DefaultDragVisual = DragVisual;
 
 	OutOperation = DragDropOp;
@@ -105,5 +111,6 @@ bool UInventorySlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDrag
     UInventoryComponent* InventoryComp = Character->GetInventoryComponent();
     if (!InventoryComp) return false;
 
-    return InventoryComp->MoveItem(InventoryDragDrop->SourceSlotX, InventoryDragDrop->SourceSlotY, SlotX, SlotY);
+    UE_LOG(LogTemp, Warning, TEXT("NativeOnDrop"));
+    return InventoryComp->MoveItem(InventoryDragDrop->SourceSlotX, InventoryDragDrop->SourceSlotY, SlotColumn, SlotRow);
 }

@@ -74,7 +74,7 @@ protected:
 	//void OnInventoryChanged();
 
 	UFUNCTION()
-	void OnItemAdded(UBaseItem* Item, FIntPoint SlotDimension);
+	void OnItemAdded(UBaseItem* Item, FIntPoint SlotDimensions);
 
 	UFUNCTION()
 	void OnQuantityChanged(UBaseItem* Item);
@@ -82,14 +82,17 @@ protected:
 	//UFUNCTION()
 	//void OnItemRemoved(UBaseItem* Item);
 
-	//UFUNCTION()
-	//void OnItemMoved(UBaseItem* Item);
+	UFUNCTION()
+	void OnItemMoved(UBaseItem* Item, FIntPoint MoveDimension);
 
 	//UFUNCTION()
 	//void OnInventoryCleared();
 
 	//UFUNCTION()
 	//void OnInventoryItemRemoved();
+
+
+	void CreateEmptySlots();
 
 private:
 

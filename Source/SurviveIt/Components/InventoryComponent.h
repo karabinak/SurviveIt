@@ -10,10 +10,10 @@
 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryCleared);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemAdded, UBaseItem*, Item, FIntPoint, ItemDiemansion);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemoved, UBaseItem*, Item);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuantityChanged, UBaseItem*, Item);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemMoved, UBaseItem*, Item);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemAdded, UBaseItem*, Item, FIntPoint, ItemDimension);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemMoved, UBaseItem*, Item, FIntPoint, MoveDimension);
 
 
 class UInventoryWidget;

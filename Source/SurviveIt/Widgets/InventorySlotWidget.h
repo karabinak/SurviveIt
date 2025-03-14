@@ -20,10 +20,10 @@ class SURVIVEIT_API UInventorySlotWidget : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void SetSlotData(int32 InX, int32 InY, UBaseItem* InItem);
+	void SetSlotData(int32 InColumn, int32 InRow, UBaseItem* InItem, float InTileSize);
 
 	UFUNCTION(BlueprintPure, Category = "Inventory")
-	void GetSlotPosition(int32& OutX, int32& OutY) const;
+	void GetSlotPosition(int32& OutColumn, int32& OutRow) const;
 
 	UFUNCTION(BlueprintPure, Category = "Inventory")
 	UBaseItem* GetItem() const;
@@ -33,10 +33,13 @@ public:
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
-	int32 SlotX;
+	int32 SlotColumn;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
-	int32 SlotY;
+	int32 SlotRow;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
+	float TileSize = 0.f;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
 	UBaseItem* Item;

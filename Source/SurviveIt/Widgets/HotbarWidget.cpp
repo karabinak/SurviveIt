@@ -30,7 +30,8 @@ void UHotbarWidget::RefreshHotbar()
 		if (UInventorySlotWidget* SlotWidget = CreateWidget<UInventorySlotWidget>(this, HotbarSlotWidgetClass))
 		{
 			UBaseItem* Item = HotbarComponent->GetItemFromSlot(i);
-			SlotWidget->SetSlotData(i, 0, Item);
+			// TEMP 10.f;
+			SlotWidget->SetSlotData(i, 0, Item, 10.f);
 
 			HotbarBox->AddChild(SlotWidget);
 		}
