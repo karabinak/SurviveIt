@@ -26,6 +26,7 @@ void UInventorySlotWidget::SetSlotData(int32 InColumn, int32 InRow, UBaseItem* I
     if (Item && ItemIcon)
     {
         ItemIcon->SetBrushFromTexture(Item->GetItemData()->Icon);
+        ItemIcon->SetOpacity(1.f);
 
         const float ItemWidth = Item->GetItemData()->Width * TileSize;
         const float ItemHeight = Item->GetItemData()->Height * TileSize;
@@ -47,6 +48,7 @@ void UInventorySlotWidget::SetSlotData(int32 InColumn, int32 InRow, UBaseItem* I
         if (ItemIcon)
         {
             ItemIcon->SetBrushFromTexture(nullptr);
+            ItemIcon->SetOpacity(0.f);
         }
 
         if (QuantityText)

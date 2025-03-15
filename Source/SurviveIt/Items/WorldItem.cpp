@@ -38,7 +38,6 @@ void AWorldItem::BeginPlay()
 
 void AWorldItem::Initialize(UBaseItem* InItem)
 {
-	UE_LOG(LogTemp, Warning, TEXT("World Initialized"));
 	Item = InItem;
 
 	UpdateItemVisuals();
@@ -84,7 +83,6 @@ AWorldItem* AWorldItem::SpawnItemInWorld(UObject* WorldContextObject, UBaseItem*
 	AWorldItem* WorldItem = World->SpawnActor<AWorldItem>(AWorldItem::StaticClass(), Location, Rotation, SpawnParams);
 	if (WorldItem)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("WorldItem"));
 		WorldItem->Initialize(Item);
 	}
 
@@ -100,8 +98,8 @@ void AWorldItem::UpdateItemVisuals()
 			MeshComponent->SetStaticMesh(Item->GetItemData()->WorldMesh);
 		}
 
-		float Scale = FMath::Max(1.0f, (float)Item->GetQuantity() / 10.0f);
-		Scale = FMath::Min(Scale, 2.0f);
-		SetActorScale3D(FVector(Scale));
+		//float Scale = FMath::Max(1.0f, (float)Item->GetQuantity() / 10.0f);
+		//Scale = FMath::Min(Scale, 2.0f);
+		//SetActorScale3D(FVector(Scale));
 	}
 }

@@ -59,6 +59,7 @@ void ASurvivalController::OnMoveTriggered(const FInputActionValue& Value)
 
 void ASurvivalController::OnLookAroundTriggered(const FInputActionValue& Value)
 {
+	if (bIsInventoryOpen) return;
 	FVector2D LookValue = Value.Get<FVector2D>();
 
 	AddYawInput(LookValue.X);
@@ -90,11 +91,22 @@ void ASurvivalController::OnToggleInventory(const FInputActionValue& Value)
 	{
 		if (HUD->ToogleInventory())
 		{
+			bIsInventoryOpen = true;
+
 			SetShowMouseCursor(true);
+			SetInputMode(FInputModeGameAndUI());
+
+			// TODO Change Mouse Location
+			//int32 ViewportSizeX, ViewportSizeY;
+			//GetViewportSize(ViewportSizeX, ViewportSizeY);
+			//SetMouseLocation(ViewportSizeX / 2, ViewportSizeY / 2);
 		}
 		else
 		{
-			SetShowMouseCursor(true);
+			bIsInventoryOpen = false;
+
+			SetShowMouseCursor(false);
+			SetInputMode(FInputModeGameOnly());
 		}
 	}
 }

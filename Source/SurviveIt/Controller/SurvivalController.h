@@ -69,6 +69,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* HotbarSlot2;
 
+	UPROPERTY()
+	bool bIsInventoryOpen = false;
+
 public:
 	
 };

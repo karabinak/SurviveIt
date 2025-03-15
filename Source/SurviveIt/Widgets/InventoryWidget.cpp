@@ -43,6 +43,7 @@ void UInventoryWidget::DelayedInitialize()
 		float GridSizeX = InventoryComponent->InventoryWidth * TileSize;
 		float GridSizeY = InventoryComponent->InventoryHeight * TileSize;
 		CanvasPanelSlot->SetSize(FVector2D(GridSizeX, GridSizeY));
+		SetVisibility(ESlateVisibility::Hidden);
 	}
 
 	CreateEmptySlots();
