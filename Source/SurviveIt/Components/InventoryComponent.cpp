@@ -94,8 +94,6 @@ UBaseItem* UInventoryComponent::RemoveItemAt(int32 Column, int32 Row)
 	if (Item)
 	{
 		ClearItemSlots(Item);
-
-		//OnInventoryChanged.Broadcast();
 		OnItemRemoved.Broadcast(Item);
 	}
 

@@ -53,9 +53,6 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* QuantityText;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateVisuals();
-
 	// Drag and Drop
 
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;

@@ -105,10 +105,7 @@ bool APlayerCharacter::DropItemFromInventory(UBaseItem* Item, int32 Quantity)
 	if (!Item ||  Quantity <= 0) return false;
 
 	int32 CurrentQuantity = Item->GetQuantity();
-	if (Quantity > CurrentQuantity)
-	{
-		Quantity = CurrentQuantity;
-	}
+	Quantity = FMath::Max(Quantity, CurrentQuantity);
 
 	UBaseItem* DroppedItem = nullptr;
 

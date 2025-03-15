@@ -54,8 +54,6 @@ void UInventorySlotWidget::SetSlotData(int32 InColumn, int32 InRow, UBaseItem* I
             QuantityText->SetVisibility(ESlateVisibility::Collapsed);
         }
     }
-
-    UpdateVisuals();
 }
 
 void UInventorySlotWidget::GetSlotPosition(int32& OutColumn, int32& OutRow) const

@@ -38,7 +38,10 @@ void AWorldItem::BeginPlay()
 
 void AWorldItem::Initialize(UBaseItem* InItem)
 {
+	UE_LOG(LogTemp, Warning, TEXT("World Initialized"));
 	Item = InItem;
+
+	UpdateItemVisuals();
 }
 
 UBaseItem* AWorldItem::GetItem() const
@@ -73,7 +76,7 @@ AWorldItem* AWorldItem::SpawnItemInWorld(UObject* WorldContextObject, UBaseItem*
 	if (!WorldContextObject || !Item || Item->IsEmpty() || !Item->GetItemData()) return nullptr;
 	
 	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
-	if (World) return nullptr;
+	if (!World) return nullptr;
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
@@ -81,6 +84,7 @@ AWorldItem* AWorldItem::SpawnItemInWorld(UObject* WorldContextObject, UBaseItem*
 	AWorldItem* WorldItem = World->SpawnActor<AWorldItem>(AWorldItem::StaticClass(), Location, Rotation, SpawnParams);
 	if (WorldItem)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("WorldItem"));
 		WorldItem->Initialize(Item);
 	}
 

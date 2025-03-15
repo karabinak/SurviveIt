@@ -77,8 +77,8 @@ protected:
 	UFUNCTION()
 	void OnItemMoved(UBaseItem* Item, FIntPoint NewPosition);
 
-	//UFUNCTION()
-	//void OnItemRemoved(UBaseItem* Item);
+	UFUNCTION()
+	void OnItemRemoved(UBaseItem* Item);
 
 	//UFUNCTION()
 	//void OnInventoryCleared();
@@ -104,6 +104,7 @@ private:
 	UPROPERTY()
 	TMap<FIntPoint, UInventorySlotWidget*> SlotWidgets;
 
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
 	//virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	//virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;

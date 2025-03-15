@@ -2,6 +2,7 @@
 
 #include "InventoryWidget.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "Components/SizeBox.h"
 #include "Components/Border.h"
 #include "Components/BorderSlot.h"
@@ -11,6 +12,8 @@
 
 #include "SurviveIt/Items/BaseItem.h"
 #include "SurviveIt/Components/InventoryComponent.h"
+#include "SurviveIt/Widgets/InventoryDragDropOperation.h" // TEMP
+#include "SurviveIt/Character/PlayerCharacter.h"
 #include "InventorySlotWidget.h"
 
 void UInventoryWidget::InitializeWidget(UInventoryComponent* InInventoryComponent)
@@ -29,8 +32,8 @@ void UInventoryWidget::DelayedInitialize()
 	InventoryComponent->OnItemAdded.AddDynamic(this, &UInventoryWidget::OnItemAdded);
 	InventoryComponent->OnQuantityChanged.AddDynamic(this, &UInventoryWidget::OnQuantityChanged);
 	InventoryComponent->OnItemMoved.AddDynamic(this, &UInventoryWidget::OnItemMoved);
+	InventoryComponent->OnItemRemoved.AddDynamic(this, &UInventoryWidget::OnItemRemoved);
 
-	//InventoryComponent->OnItemRemoved.AddDynamic(this, &UInventoryWidget::OnItemRemoved);
 	//InventoryComponent->OnInventoryCleared.AddDynamic(this, &UInventoryWidget::OnInventoryCleared);
 
 	if (UCanvasPanelSlot* CanvasPanelSlot = Cast<UCanvasPanelSlot>(InventoryBorder->Slot))
@@ -165,6 +168,50 @@ void UInventoryWidget::OnItemMoved(UBaseItem* Item, FIntPoint NewPosition)
 	OnItemAdded(Item, NewPosition);
 }
 
+void UInventoryWidget::OnItemRemoved(UBaseItem* Item)
+{
+	if (!Item) return;
+
+	FIntPoint ItemPosition{ 0 };
+	UInventorySlotWidget* RootSlotWidget = nullptr;
+
+	for (const TPair<FIntPoint, UInventorySlotWidget*>& Pair : SlotWidgets)
+	{
+		if (Pair.Value->GetItem() == Item)
+		{
+			ItemPosition = Pair.Key;
+			RootSlotWidget = Pair.Value;
+			break;
+		}
+	}
+
+	if (!RootSlotWidget) return;
+
+	const int32 ItemWidth = Item->GetItemData()->Width;
+	const int32 ItemHeight = Item->GetItemData()->Height;
+
+	RootSlotWidget->SetSlotData(ItemPosition.X, ItemPosition.Y, nullptr, TileSize);
+
+	if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(RootSlotWidget->Slot))
+	{
+		CanvasSlot->SetSize(FVector2D(TileSize));
+	}
+
+	UpdateCoveredSlots(ItemPosition.X, ItemPosition.Y, ItemWidth, ItemHeight, false);
+}
+
+bool UInventoryWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	UInventoryDragDropOperation* DragDrop = Cast<UInventoryDragDropOperation>(InOperation);
+	if (!DragDrop || !DragDrop->SourceItem) return false;
+
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (PlayerCharacter)
+	{
+		return PlayerCharacter->DropItemFromInventory(DragDrop->SourceItem);
+	}
+	return false;
+}
 
 bool UInventoryWidget::ToggleInventory()
 {
