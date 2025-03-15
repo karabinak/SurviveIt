@@ -6,11 +6,15 @@
 #include "Components/SizeBox.h"
 #include "Blueprint/DragDropOperation.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+//#include "Blueprint/WidgetTree.h"
+#include "Blueprint/UserWidget.h"
 
 #include "SurviveIt/Items/BaseItem.h"
 #include "SurviveIt/Items/ResourceItem.h"
 #include "SurviveIt/Character/PlayerCharacter.h"
 #include "SurviveIt/Components/InventoryComponent.h"
+#include "SurviveIt/Components/HotbarComponent.h"
+#include "HotbarWidget.h"
 #include "InventoryDragDropOperation.h"
 
 void UInventorySlotWidget::SetSlotData(int32 InColumn, int32 InRow, UBaseItem* InItem, float InTileSize)
@@ -110,8 +114,28 @@ bool UInventorySlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDrag
     APlayerCharacter* Character = Cast<APlayerCharacter>(GetOwningPlayerPawn());
     if (!Character) return false;
 
+    UHotbarComponent* HotbarComp = Character->GetHotbarComponent();
     UInventoryComponent* InventoryComp = Character->GetInventoryComponent();
+
     if (!InventoryComp) return false;
 
-    return InventoryComp->MoveItem(InventoryDragDrop->SourceSlotX, InventoryDragDrop->SourceSlotY, SlotColumn, SlotRow);
+    if (bHotbarItem && HotbarComp)
+    {
+        UBaseItem* DragItem = InventoryDragDrop->SourceItem;
+        InventoryComp->RemoveItemAt(InventoryDragDrop->SourceSlotX, InventoryDragDrop->SourceSlotY);
+
+        UBaseItem* PreviousItem = HotbarComp->GetItemFromSlot(SlotColumn);
+        bool Result = HotbarComp->SetItemInSlot(SlotColumn, DragItem);
+ 
+        if (PreviousItem) // If there was an item in the hotbar slot, return it to inventory
+        {
+            InventoryComp->AddItem(PreviousItem);
+        }
+
+        return Result;
+    }
+    else
+    {
+        return InventoryComp->MoveItem(InventoryDragDrop->SourceSlotX, InventoryDragDrop->SourceSlotY, SlotColumn, SlotRow);
+    }
 }

@@ -38,11 +38,6 @@ struct FInventorySlot
 	FInventorySlot() : Column(0), Row(0), Item(nullptr) {}
 
 	FInventorySlot(int32 InColumn, int32 InRow) : Column(InColumn), Row(InRow), Item(nullptr) {}
-
-	//bool operator == (const FInventorySlot & Other) const
-	//{
-	//	return Column == Other.Column && Row == Other.Row;
-	//}
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )

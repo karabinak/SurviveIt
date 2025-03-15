@@ -7,7 +7,10 @@
 #include "PlayerHUD.generated.h"
 
 class UInventoryWidget;
+class UPlayerWidget;
+class UHotbarWidget;
 class UInventoryComponent;
+class UHotbarComponent;
 
 UCLASS()
 class SURVIVEIT_API APlayerHUD : public AHUD
@@ -17,6 +20,8 @@ class SURVIVEIT_API APlayerHUD : public AHUD
 public:
 
 	void CreateInventoryWidget(UInventoryComponent* Owner);
+	void CreateHotbarWidget(UHotbarComponent* Owner);
+	void CreatePlayerWidget();
 
 	bool ToogleInventory();
 
@@ -29,5 +34,17 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Widgets")
 	UInventoryWidget* InventoryWidget;
+
+	UPROPERTY(EditAnywhere, Category = "Widgets")
+	TSubclassOf<UHotbarWidget> HotbarWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "Widgets")
+	UHotbarWidget* HotbarWidget;
+
+	UPROPERTY(EditAnywhere, Category = "Widgets")
+	TSubclassOf<UPlayerWidget> PlayerWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "Widgets")
+	UPlayerWidget* PlayerWidget;
 	
 };

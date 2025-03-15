@@ -11,6 +11,9 @@ class UBaseItem;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHotbarSlotChanged, int32, SlotIndex);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHotbarSlotSelected, int32, SlotIndex);
 
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemoved, UBaseItem*, Item);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemMoved, UBaseItem*, Item, FIntPoint, MoveDimension);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SURVIVEIT_API UHotbarComponent : public UActorComponent
 {
@@ -18,6 +21,17 @@ class SURVIVEIT_API UHotbarComponent : public UActorComponent
 
 public:	
 	UHotbarComponent();
+
+	/** DELEGATES */
+
+	//UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	//FOnItemRemoved OnItemRemoved;
+
+	//UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	//FOnItemMoved OnItemMoved;
+
+	/** DELEGATES */
+
 
 	int32 NumSlots;
 
@@ -27,7 +41,7 @@ public:
 
 	FOnHotbarSlotSelected OnHotbarSlotSelected;
 
-	void Initialize(int32 InNumSlots);
+	void Initialize();
 
 	bool SetItemInSlot(int32 SlotIndex, UBaseItem* Item);
 
@@ -49,7 +63,7 @@ protected:
 	UPROPERTY()
 	TArray<UBaseItem*> HotbarItems;
 
-	void InitializeSlots();
+	//void InitializeSlots();
 
 private:
 	virtual void BeginPlay() override;

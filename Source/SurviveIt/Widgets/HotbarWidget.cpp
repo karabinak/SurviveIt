@@ -4,52 +4,117 @@
 #include "HotbarWidget.h"
 
 #include "Components/HorizontalBox.h"
+#include "Components/CanvasPanel.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Components/Border.h"
 
 #include "SurviveIt/Components/HotbarComponent.h"
 #include "InventorySlotWidget.h"
 
 void UHotbarWidget::InitializeWidget(UHotbarComponent* InHotbarComponent)
 {
+	if (!InHotbarComponent) return;
 	HotbarComponent = InHotbarComponent;
+
+	FTimerHandle TimerHandle; // Delayed function by 0.1s
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UHotbarWidget::DelayedInitialize, 0.1f, false);
+
+}
+
+void UHotbarWidget::DelayedInitialize()
+{
 
 	if (HotbarComponent)
 	{
 		HotbarComponent->OnHotbarSlotChanged.AddDynamic(this, &UHotbarWidget::OnHotbarSlotChanged);
 		HotbarComponent->OnHotbarSlotSelected.AddDynamic(this, &UHotbarWidget::OnHotbarSlotSelected);
 	}
+
+	if (UCanvasPanelSlot* CanvasPanelSlot = Cast<UCanvasPanelSlot>(HotbarBorder->Slot))
+	{
+		TileSize = HotbarBorder->GetCachedGeometry().GetLocalSize().X / HotbarComponent->NumSlots;
+
+		float GridSizeX = HotbarComponent->NumSlots * TileSize;
+		float GridSizeY = TileSize;
+		CanvasPanelSlot->SetSize(FVector2D(GridSizeX, GridSizeY));
+		SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	CreateEmptySlots();
 }
 
-void UHotbarWidget::RefreshHotbar()
+void UHotbarWidget::ShowHotbar()
 {
-	if (!HotbarComponent || !HotbarBox) return;
+	SetVisibility(ESlateVisibility::Visible);
 
-	HotbarBox->ClearChildren();
-
-	for (int32 i = 0; i < HotbarComponent->NumSlots; i++)
+	if (HotbarComponent)
 	{
-		if (UInventorySlotWidget* SlotWidget = CreateWidget<UInventorySlotWidget>(this, HotbarSlotWidgetClass))
+		for (int32 i = 0; i < HotbarComponent->NumSlots; i++)
 		{
-			UBaseItem* Item = HotbarComponent->GetItemFromSlot(i);
-			// TEMP 10.f;
-			SlotWidget->SetSlotData(i, 0, Item, 10.f);
+			OnHotbarSlotChanged(i);
+		}
 
-			HotbarBox->AddChild(SlotWidget);
+		// Show selection
+		OnHotbarSlotSelected(HotbarComponent->SelectedSlot);
+	}
+}
+
+void UHotbarWidget::CreateEmptySlots()
+{
+	HotbarCanvas->ClearChildren();
+	HotbarWidgets.Empty();
+
+	for (int32 Size = 0; Size < HotbarComponent->NumSlots; Size++)
+	{
+		if (UInventorySlotWidget* SlotWidget = CreateWidget<UInventorySlotWidget>(this, HotbarSlotItem))
+		{
+			SlotWidget->SetSlotData(Size, 0, nullptr, TileSize);
+			SlotWidget->bHotbarItem = true;
+
+			UCanvasPanelSlot* CanvasSlot = HotbarCanvas->AddChildToCanvas(SlotWidget);
+			CanvasSlot->SetSize(FVector2D(TileSize));
+			CanvasSlot->SetPosition(FVector2D(Size, 0.f) * TileSize);
+
+			HotbarWidgets.Add(Size, SlotWidget);
 		}
 	}
 }
 
 void UHotbarWidget::OnHotbarSlotChanged(int32 SlotIndex)
 {
-	RefreshHotbar();
+	if (!HotbarComponent || !HotbarWidgets.Contains(SlotIndex)) return;
+
+	UBaseItem* Item = HotbarComponent->GetItemFromSlot(SlotIndex);
+	UInventorySlotWidget* SlotWidget = HotbarWidgets[SlotIndex];
+
+	SlotWidget->SetSlotData(SlotIndex, 0, Item, TileSize);
+
+	if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(SlotWidget->Slot))
+	{
+		CanvasSlot->SetSize(FVector2D(TileSize));
+	}
+
+	if (SlotIndex == HotbarComponent->SelectedSlot)
+	{
+		OnHotbarSlotSelected(SlotIndex);
+	}
 }
 
 void UHotbarWidget::OnHotbarSlotSelected(int32 SlotIndex)
 {
-	for (int32 i = 0; i < HotbarBox->GetChildrenCount(); i++)
+	for (auto& Pair : HotbarWidgets)
 	{
-		if (UInventorySlotWidget* SlotWidget = Cast<UInventorySlotWidget>(HotbarBox->GetChildAt(i)))
+		if (UBorder* Border = Cast<UBorder>(Pair.Value->GetRootWidget()))
 		{
-			//SlotWidget->SetSelevted(i == SlotIndex);
+			Border->SetBrushColor(FLinearColor(1.0f, 1.0f, 1.0f, 0.5f));
+		}
+	}
+
+	if (HotbarWidgets.Contains(SlotIndex))
+	{
+		if (UBorder* Border = Cast<UBorder>(HotbarWidgets[SlotIndex]->GetRootWidget()))
+		{
+			Border->SetBrushColor(FLinearColor(1.0f, 0.8f, 0.0f, 0.7f));
 		}
 	}
 }

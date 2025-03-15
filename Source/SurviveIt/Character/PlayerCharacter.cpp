@@ -1,6 +1,7 @@
 #include "PlayerCharacter.h"
 
 #include "Camera/CameraComponent.h"
+#include "Kismet/GameplayStatics.h"
 //#include "GameFramework/SpringArmComponent.h"
 //#include "Blueprint/UserWidget.h"
 
@@ -13,6 +14,8 @@
 #include "SurviveIt/Items/WorldItem.h"
 #include "SurviveIt/Items/BaseItem.h"
 #include "SurviveIt/Items/ToolItem.h"
+#include "SurviveIt/Widgets/PlayerHUD.h"
+
 //#include "SurviveIt/Widgets/PlayerWidget.h"
 //#include "SurviveIt/Controller/SurvivalController.h"
 
@@ -36,13 +39,14 @@ void APlayerCharacter::BeginPlay()
 	// Inventory size
 	//InventoryComponent->Initialize();
 
-	HotbarComponent->Initialize(10);
+	//HotbarComponent->Initialize(10);
 	
-	//if (PlayerWidgetClass)
-	//{
-	//	PlayerWidget = CreateWidget<UPlayerWidget>(GetWorld(), PlayerWidgetClass);
-	//	PlayerWidget->AddToViewport();
-	//}
+	
+	APlayerHUD* HUD = Cast<APlayerHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (HUD)
+	{
+		HUD->CreatePlayerWidget();
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -52,7 +56,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	//ChangeWidgetItemName();
 }
 
-UInventoryComponent* APlayerCharacter::GetInventoryComponent() const
+UInventoryComponent* APlayerCharacter::GetInventoryComponent() const 
 {
 	return InventoryComponent;
 }

@@ -7,7 +7,9 @@
 #include "HotbarWidget.generated.h"
 
 class UHotbarComponent;
-class UHorizontalBox;
+class UBorder;
+class UCanvasPanel;
+class UInventorySlotWidget;
 
 UCLASS()
 class SURVIVEIT_API UHotbarWidget : public UUserWidget
@@ -19,18 +21,35 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Hotbar")
 	void InitializeWidget(UHotbarComponent* InHotbarComponent);
 
+	//UFUNCTION(BlueprintCallable, Category = "Hotbar")
+	//void RefreshHotbar();
+
 	UFUNCTION(BlueprintCallable, Category = "Hotbar")
-	void RefreshHotbar();
+	void DelayedInitialize();
+
+	UFUNCTION(BlueprintCallable, Category = "Hotbar")
+	void ShowHotbar();
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Hotbar")
 	UHotbarComponent* HotbarComponent;
 
 	UPROPERTY(meta = (BindWidget))
-	UHorizontalBox* HotbarBox;
+	UBorder* HotbarBorder;
+
+	UPROPERTY(meta = (BindWidget))
+	UCanvasPanel* HotbarCanvas;
+	
+	UPROPERTY()
+	TMap<int32, UInventorySlotWidget*> HotbarWidgets;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Hotbar")
-	TSubclassOf<UUserWidget> HotbarSlotWidgetClass;
+	TSubclassOf<UInventorySlotWidget> HotbarSlotItem;
+
+	UPROPERTY()
+	float TileSize = 10.f;
+
+	void CreateEmptySlots();
 
 	UFUNCTION()
 	void OnHotbarSlotChanged(int32 SlotIndex);

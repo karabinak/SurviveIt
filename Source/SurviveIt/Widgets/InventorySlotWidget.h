@@ -19,6 +19,10 @@ class SURVIVEIT_API UInventorySlotWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+
+	UPROPERTY()
+	bool bHotbarItem = false;
+
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void SetSlotData(int32 InColumn, int32 InRow, UBaseItem* InItem, float InTileSize);
 

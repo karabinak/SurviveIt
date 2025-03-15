@@ -8,7 +8,7 @@ UHotbarComponent::UHotbarComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	NumSlots = 10;
+	NumSlots = 5;
 	SelectedSlot = 0;
 }
 
@@ -16,15 +16,24 @@ void UHotbarComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitializeSlots();
+	Initialize();
 }
 
-void UHotbarComponent::Initialize(int32 InNumSlots)
+void UHotbarComponent::Initialize()
 {
-	NumSlots = FMath::Max(1, InNumSlots);
-	SelectedSlot = 0;
+	HotbarItems.Empty();
+	HotbarItems.SetNum(NumSlots);
 
-	InitializeSlots();
+	for (int32 i = 0; i < NumSlots; i++)
+	{
+		HotbarItems[i] = nullptr;
+	}
+
+	//APlayerHUD* HUD = Cast<APlayerHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	//if (HUD)
+	//{
+	//	HUD->CreateInventoryWidget(this);
+	//}
 }
 
 bool UHotbarComponent::SetItemInSlot(int32 SlotIndex, UBaseItem* Item)
@@ -34,7 +43,7 @@ bool UHotbarComponent::SetItemInSlot(int32 SlotIndex, UBaseItem* Item)
 	HotbarItems[SlotIndex] = Item;
 	OnHotbarSlotChanged.Broadcast(SlotIndex);
 
-	return false;
+	return true;
 }
 
 UBaseItem* UHotbarComponent::GetItemFromSlot(int32 SlotIndex) const
@@ -104,17 +113,3 @@ void UHotbarComponent::ClearHotbar()
 		OnHotbarSlotChanged.Broadcast(i);
 	}
 }
-
-void UHotbarComponent::InitializeSlots()
-{
-	HotbarItems.Empty();
-	HotbarItems.SetNum(NumSlots);
-
-	for (int32 i = 0; i < NumSlots; i++)
-	{
-		HotbarItems[i] = nullptr;
-	}
-}
-
-
-
