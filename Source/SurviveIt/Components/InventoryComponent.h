@@ -5,7 +5,7 @@
 #include "Components/ActorComponent.h"
 //#include "SurviveIt/Data/InventoryData.h"
 //#include "SurviveIt/Data/ItemData.h"
-#include "SurviveIt/Interfaces/InventoryHandler.h"
+//#include "SurviveIt/Interfaces/InventoryHandler.h"
 #include "InventoryComponent.generated.h"
 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryChanged);
@@ -41,7 +41,7 @@ struct FInventorySlot
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class SURVIVEIT_API UInventoryComponent : public UActorComponent, public IInventoryHandler
+class SURVIVEIT_API UInventoryComponent : public UActorComponent//, public IInventoryHandler
 {
 	GENERATED_BODY()
 

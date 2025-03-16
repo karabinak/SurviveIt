@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 //#include "SurviveIt/Data/ItemData.h"
-#include "SurviveIt/Interfaces/InventoryHandler.h"
+//#include "SurviveIt/Interfaces/InventoryHandler.h"
 #include "BaseItem.generated.h"
 
 //class UBoxComponent;

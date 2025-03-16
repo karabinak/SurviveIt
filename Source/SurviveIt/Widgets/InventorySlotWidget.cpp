@@ -104,6 +104,8 @@ void UInventorySlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, con
 	DragDropOp->DefaultDragVisual = DragVisual;
 
 	OutOperation = DragDropOp;
+
+    /*SlotBackground->SetColorAndOpacity(FLinearColor(1.f, 1.f, 0.3f, 0.5f));*/
 }
 
 bool UInventorySlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)

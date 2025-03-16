@@ -2,7 +2,7 @@
 
 
 #include "ToolItem.h"
-#include "SurviveIt/Interfaces/InventoryHandler.h"
+//#include "SurviveIt/Interfaces/InventoryHandler.h"
 #include "SurviveIt/Character/PlayerCharacter.h"
 #include "SurviveIt/Resources/ResourceNode.h"
 
