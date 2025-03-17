@@ -8,23 +8,13 @@ UItemData::UItemData()
 	Description = FText::FromString("An item");
 	MaxStackSize = 1;
 	ItemType = EItemType::EIT_Resources;
+	bIsStackable = true;
 }
 
 UBaseItem::UBaseItem()
 {
 	ItemData = nullptr;
 	Quantity = 0;
-
-	//ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
-	//BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("SphereComponent"));
-
-	//SetRootComponent(ItemMesh);
-	//ItemMesh->SetupAttachment(GetRootComponent());
-
-	//ItemMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
-
-	//BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-	//BoxComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 }
 
 void UBaseItem::Initialize(UItemData* InItemData, int32 InQuantity)
@@ -78,7 +68,9 @@ int32 UBaseItem::RemoveQuantity(int32 AmountToRemove)
 
 bool UBaseItem::CanStackWith(UBaseItem* OtherItem) const
 {
-	if (OtherItem == nullptr || ItemData == nullptr || OtherItem->ItemData == nullptr) return false;
+	if (ItemData == nullptr || !ItemData->bIsStackable) return false;
+	if (OtherItem == nullptr || OtherItem->ItemData == nullptr || !OtherItem->ItemData->bIsStackable) return false;
+
 	return ItemData == OtherItem->ItemData && Quantity < ItemData->MaxStackSize;
 }
 
@@ -97,7 +89,7 @@ int32 UBaseItem::TryStackWith(UBaseItem* OtherItem)
 
 UBaseItem* UBaseItem::SplitStack(int32 SplitQuantity)
 {
-	if (ItemData == nullptr || SplitQuantity <= 0 || SplitQuantity >= Quantity) return nullptr;
+	if (ItemData == nullptr || !ItemData->bIsStackable || SplitQuantity <= 0 || SplitQuantity >= Quantity) return nullptr;
 
 	UBaseItem* NewItem = NewObject<UBaseItem>();
 	NewItem->Initialize(ItemData, SplitQuantity);
@@ -118,29 +110,5 @@ bool UBaseItem::IsEmpty() const
 bool UBaseItem::IsStackable() const
 {
 	if (ItemData == nullptr) return false;
-	return ItemData->MaxStackSize > 1;
+	return ItemData->bIsStackable;
 }
-
-/** xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
-/** xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
-/** xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
-/** xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
-
-//void UBaseItem::RemoveWidget()
-//{
-//
-//}
-//
-//void UBaseItem::BeginPlay()
-//{
-//	Super::BeginPlay();
-//	
-//	ItemMesh->SetSimulatePhysics(true);
-//	//BoxComponent->SetSimulatePhysics(false);
-//}
-//
-//void UBaseItem::Tick(float DeltaTime)
-//{
-//	Super::Tick(DeltaTime);
-//
-//}

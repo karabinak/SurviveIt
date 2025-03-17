@@ -5,16 +5,13 @@
 #include "SurviveIt/Items/BaseItem.h"
 #include "SurviveIt/Widgets/PlayerHUD.h"
 #include "Kismet/GameplayStatics.h"
-//#include "SurviveIt/Items/ToolItem.h"
-//#include "SurviveIt/Items/ResourceItem.h"
-//#include "SurviveIt/Widgets/InventoryWidget.h"
 
 UInventoryComponent::UInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	InventoryWidth = 10; // Column
-	InventoryHeight = 5; // Row
+	InventoryWidth = 7; // Column
+	InventoryHeight = 4; // Row
 }
 
 bool UInventoryComponent::IsValidPosition(int32 Column, int32 Row) const
@@ -22,21 +19,18 @@ bool UInventoryComponent::IsValidPosition(int32 Column, int32 Row) const
 	return Column >= 0 && Column < InventoryWidth && Row >= 0 && Row < InventoryHeight;
 }
 
-bool UInventoryComponent::CanItemFitAt(UBaseItem* Item, int32 Column, int32 Row) const
-{
-	if (!Item || !Item->GetItemData()) return false;
-
-	int32 ItemWidth = Item->GetItemData()->Width;
-	int32 ItemHeight = Item->GetItemData()->Height;
-
-	if (Column < 0 || Row < 0 || Column + ItemWidth > InventoryWidth || Row + ItemHeight > InventoryHeight) return false;
-
-	return AreItemSlotsEmpty(Item, Column, Row);
-}
+//bool UInventoryComponent::CanItemFitAt(UBaseItem* Item, int32 Column, int32 Row) const
+//{
+//	if (!Item || !Item->GetItemData()) return false;
+//
+//	if (Column < 0 || Row < 0 || Column > InventoryWidth || Row > InventoryHeight) return false;
+//
+//	return AreItemSlotsEmpty(Item, Column, Row);
+//}
 
 bool UInventoryComponent::AddItemAt(UBaseItem* Item, int32 Column, int32 Row)
 {
-	if (!Item || Item->IsEmpty() || !CanItemFitAt(Item, Column, Row)) return false;
+	if (!Item || Item->IsEmpty() || !AreItemSlotsEmpty(Item, Column, Row)) return false;
 
 	SetItemSlots(Item, Column, Row);
 	//OnInventoryChanged.Broadcast();
@@ -115,7 +109,7 @@ bool UInventoryComponent::MoveItem(int32 FromColumn, int32 FromRow, int32 ToColu
 
 	ClearItemSlots(Item);
 
-	if (!CanItemFitAt(Item, ToColumn, ToRow))
+	if (!AreItemSlotsEmpty(Item, ToColumn, ToRow))
 	{
 		SetItemSlots(Item, FromColumn, FromRow);
 		return false;
@@ -196,28 +190,14 @@ void UInventoryComponent::Initialize()
 	APlayerHUD* HUD = Cast<APlayerHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 	if (HUD)
 	{
-		HUD->CreateInventoryWidget(this);
+		HUD->CreateMainInventoryWidget(this);
 	}
 }
 
-bool UInventoryComponent::AreItemSlotsEmpty(UBaseItem* Item, int32 StartColumn, int32 StartRow) const
+bool UInventoryComponent::AreItemSlotsEmpty(UBaseItem* Item, int32 Column, int32 Row) const
 {
-	// Checked in CanItemFitAt
-	// if (!Item && !Item->GetItemData()) return false;
+	if (!IsValidPosition(Column, Row) || GetItemAt(Column, Row) != nullptr) return false;
 
-	int32 ItemWidth = Item->GetItemData()->Width;
-	int32 ItemHeight = Item->GetItemData()->Height;
-
-	for (int32 Row = 0; Row < ItemHeight; Row++)
-	{
-		for (int32 Column = 0; Column < ItemWidth; Column++)
-		{
-			if (!IsValidPosition(Column + StartColumn, Row + StartRow) || GetItemAt(Column + StartColumn, Row + StartRow) != nullptr)
-			{
-				return false;
-			}
-		}
-	}
 	return true;
 }
 
@@ -226,23 +206,14 @@ int32 UInventoryComponent::GetSlotIndex(int32 Column, int32 Row) const
 	return Row * InventoryWidth + Column;
 }
 
-void UInventoryComponent::SetItemSlots(UBaseItem* Item, int32 StartColumn, int32 StartRow)
+void UInventoryComponent::SetItemSlots(UBaseItem* Item, int32 Column, int32 Row)
 {
 	if (!Item || !Item->GetItemData()) return;
 
-	int32 ItemWidth = Item->GetItemData()->Width;
-	int32 ItemHeight = Item->GetItemData()->Height;
-
-	for (int32 Row = StartRow; Row < StartRow + ItemHeight; Row++)
+	if (IsValidPosition(Column, Row))
 	{
-		for (int32 Column = StartColumn; Column < StartColumn + ItemWidth; Column++)
-		{
-			if (IsValidPosition(Column, Row))
-			{
-				int32 Index = GetSlotIndex(Column, Row);
-				InventorySlots[Index].Item = Item;
-			}
-		}
+		int32 Index = GetSlotIndex(Column, Row);
+		InventorySlots[Index].Item = Item;
 	}
 }
 
@@ -267,7 +238,7 @@ bool UInventoryComponent::FindFirstFitPosition(UBaseItem* Item, int32& OutColumn
 	{
 		for (int32 Row = 0; Row < InventoryHeight; Row++)
 		{
-			if (CanItemFitAt(Item, Column, Row))
+			if (AreItemSlotsEmpty(Item, Column, Row))
 			{
 				OutColumn = Column;
 				OutRow = Row;

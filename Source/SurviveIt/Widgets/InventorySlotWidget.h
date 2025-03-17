@@ -48,11 +48,11 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
 	UBaseItem* Item;
 
-	UPROPERTY(meta = (BindWidget))
-	USizeBox* SlotSizeBox;
+	//UPROPERTY(meta = (BindWidget))
+	//USizeBox* SlotSizeBox;
 
 	UPROPERTY(meta = (BindWidget))
-	UImage* SlotBackground;
+	UImage* BackgroundImage;
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* ItemIcon;

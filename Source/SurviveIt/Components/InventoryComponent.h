@@ -12,8 +12,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryCleared);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemoved, UBaseItem*, Item);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuantityChanged, UBaseItem*, Item);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemAdded, UBaseItem*, Item, FIntPoint, ItemDimension);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemMoved, UBaseItem*, Item, FIntPoint, MoveDimension);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemAdded, UBaseItem*, Item, FIntPoint, ItemPosition);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemMoved, UBaseItem*, Item, FIntPoint, NewPosition);
 
 
 class UInventoryWidget;
@@ -78,8 +78,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool IsValidPosition(int32 Column, int32 Row) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	bool CanItemFitAt(UBaseItem* Item, int32 Column, int32 Row) const;
+	//UFUNCTION(BlueprintCallable, Category = "Inventory")
+	//bool CanItemFitAt(UBaseItem* Item, int32 Column, int32 Row) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool AddItemAt(UBaseItem* Item, int32 Column, int32 Row);
@@ -110,13 +110,6 @@ public:
 
 protected:
 
-	/*  WIDGETS  */
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
-	//TSubclassOf<UInventoryWidget> InventoryWidgetClass;
-
-	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Widgets")
-	//UInventoryWidget* InventoryWidget;
-
 	UPROPERTY(VisibleAnywhere)
 	TArray<FInventorySlot> InventorySlots;
 
@@ -124,11 +117,11 @@ protected:
 
 	void Initialize();
 
-	bool AreItemSlotsEmpty(UBaseItem* Item, int32 StartColumn, int32 StartRow) const;
+	bool AreItemSlotsEmpty(UBaseItem* Item, int32 Column, int32 Row) const;
 
 	int32 GetSlotIndex(int32 Column, int32 Row) const;
 
-	void SetItemSlots(UBaseItem* Item, int32 StartColumn, int32 StartRow);
+	void SetItemSlots(UBaseItem* Item, int32 Column, int32 Row);
 
 	void ClearItemSlots(UBaseItem* Item);
 

@@ -24,18 +24,16 @@ void UInventorySlotWidget::SetSlotData(int32 InColumn, int32 InRow, UBaseItem* I
 	Item = InItem;
     TileSize = InTileSize;
 
-    SlotSizeBox->SetWidthOverride(TileSize);
-    SlotSizeBox->SetHeightOverride(TileSize);
+    //TEMP
+    SetVisibility(ESlateVisibility::Visible);
+    
+    //SlotSizeBox->SetWidthOverride(TileSize);
+    //SlotSizeBox->SetHeightOverride(TileSize);
 
     if (Item && ItemIcon)
     {
         ItemIcon->SetBrushFromTexture(Item->GetItemData()->Icon);
         ItemIcon->SetOpacity(1.f);
-
-        const float ItemWidth = Item->GetItemData()->Width * TileSize;
-        const float ItemHeight = Item->GetItemData()->Height * TileSize;
-        SlotSizeBox->SetWidthOverride(ItemWidth);
-        SlotSizeBox->SetHeightOverride(ItemHeight);
 
         if (Item->IsStackable() && QuantityText)
         {

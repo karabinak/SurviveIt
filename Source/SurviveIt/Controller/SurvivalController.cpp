@@ -89,7 +89,7 @@ void ASurvivalController::OnToggleInventory(const FInputActionValue& Value)
 	APlayerHUD* HUD = Cast<APlayerHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 	if (HUD)
 	{
-		if (HUD->ToogleInventory())
+		if (HUD->ToogleMainInventoryWidget())
 		{
 			bIsInventoryOpen = true;
 

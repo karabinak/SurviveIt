@@ -48,10 +48,13 @@ public:
 	int32 MaxStackSize;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Item Properties")
-	int32 Width = 1;
+	bool bIsStackable;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Item Properties")
-	int32 Height = 1;
+	//UPROPERTY(EditDefaultsOnly, Category = "Item Properties")
+	//int32 Width = 1;
+
+	//UPROPERTY(EditDefaultsOnly, Category = "Item Properties")
+	//int32 Height = 1;
 
 	UItemData();
 

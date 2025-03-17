@@ -2,22 +2,15 @@
 
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
-//#include "GameFramework/SpringArmComponent.h"
-//#include "Blueprint/UserWidget.h"
-
 
 #include "SurviveIt/Components/InventoryComponent.h"
 #include "SurviveIt/Components/HotbarComponent.h"
-//#include "SurviveIt/Interfaces/Tool.h"
 #include "SurviveIt/Interfaces/Harvestable.h"
-//#include "SurviveIt/Widgets/InventoryWidget.h"
 #include "SurviveIt/Items/WorldItem.h"
 #include "SurviveIt/Items/BaseItem.h"
 #include "SurviveIt/Items/ToolItem.h"
 #include "SurviveIt/Widgets/PlayerHUD.h"
 
-//#include "SurviveIt/Widgets/PlayerWidget.h"
-//#include "SurviveIt/Controller/SurvivalController.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -35,11 +28,6 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// Inventory size
-	//InventoryComponent->Initialize();
-
-	//HotbarComponent->Initialize(10);
 	
 	
 	APlayerHUD* HUD = Cast<APlayerHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());

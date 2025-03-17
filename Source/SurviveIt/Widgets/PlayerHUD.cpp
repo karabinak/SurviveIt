@@ -2,18 +2,32 @@
 
 
 #include "PlayerHUD.h"
-#include "InventoryWidget.h"
+#include "MainInventoryWidget.h"
 #include "PlayerWidget.h"
 #include "HotbarWidget.h"
+#include "InventoryGridWidget.h"
 
-void APlayerHUD::CreateInventoryWidget(UInventoryComponent* InventoryComponent)
+void APlayerHUD::CreateMainInventoryWidget(UInventoryComponent* InventoryComponent)
 {
-	if (InventoryWidgetClass)
+	if (MainInventoryWidgetClass)
 	{
-		InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
-		InventoryWidget->AddToViewport();
-		InventoryWidget->InitializeWidget(InventoryComponent);
+		MainInventoryWidget = CreateWidget<UMainInventoryWidget>(GetWorld(), MainInventoryWidgetClass);
+		MainInventoryWidget->AddToViewport();
+		MainInventoryWidget->InitializeWidget(InventoryComponent);
 	}
+}
+
+// NEED TO BE CHANGED ITS A LITTLE WEIRD LOOP THERE FROM FUNCTION ABOVE
+UInventoryGridWidget* APlayerHUD::CreateInventoryGridWidget(UInventoryComponent* InventoryComponent)
+{
+	//if (InventoryGridClass)
+	//{
+	//	InventoryGridWidget = CreateWidget<UInventoryGridWidget>(GetWorld(), InventoryGridClass);
+	//	InventoryGridWidget->AddToViewport();
+	//	InventoryGridWidget->InitializeWidget(InventoryComponent);
+	//	return InventoryGridWidget;
+	//}
+	return nullptr;
 }
 
 void APlayerHUD::CreateHotbarWidget(UHotbarComponent* HotbarComponent)
@@ -26,21 +40,43 @@ void APlayerHUD::CreateHotbarWidget(UHotbarComponent* HotbarComponent)
 	}
 }
 
-bool APlayerHUD::ToogleInventory()
-{
-	if (InventoryWidget)
-	{
-		if (InventoryWidget->ToggleInventory()) return true;
-	}
-	return false;
-}
-
-
 void APlayerHUD::CreatePlayerWidget()
 {
 	if (PlayerWidgetClass)
 	{
 		PlayerWidget = CreateWidget<UPlayerWidget>(GetWorld(), PlayerWidgetClass);
 		PlayerWidget->AddToViewport();
+	}
+}
+
+bool APlayerHUD::ToogleMainInventoryWidget()
+{
+	if (!MainInventoryWidget) return false;
+
+	if (MainInventoryWidget->GetVisibility() == ESlateVisibility::Visible)
+	{
+		MainInventoryWidget->SetVisibility(ESlateVisibility::Hidden);
+		return false;
+	}
+	else
+	{
+		MainInventoryWidget->SetVisibility(ESlateVisibility::Visible);
+		return true;
+	}
+}
+
+bool APlayerHUD::ToogleInventoryGridWidget()
+{
+	if (!InventoryGridWidget) return false;
+
+	if (InventoryGridWidget->GetVisibility() == ESlateVisibility::Visible)
+	{
+		InventoryGridWidget->SetVisibility(ESlateVisibility::Hidden);
+		return false;
+	}
+	else
+	{
+		InventoryGridWidget->SetVisibility(ESlateVisibility::Visible);
+		return true;
 	}
 }
