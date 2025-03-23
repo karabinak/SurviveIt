@@ -121,7 +121,7 @@ protected:
 
 	int32 GetSlotIndex(int32 Column, int32 Row) const;
 
-	void SetItemSlots(UBaseItem* Item, int32 Column, int32 Row);
+	void SetItemSlot(UBaseItem* Item, int32 Column, int32 Row);
 
 	void ClearItemSlots(UBaseItem* Item);
 

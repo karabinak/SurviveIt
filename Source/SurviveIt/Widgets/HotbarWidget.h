@@ -19,7 +19,7 @@ class SURVIVEIT_API UHotbarWidget : public UUserWidget
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Hotbar")
-	void InitializeWidget(UHotbarComponent* InHotbarComponent);
+	void InitializeWidget(UHotbarComponent* InHotbarComponent, float PanelSize);
 
 	//UFUNCTION(BlueprintCallable, Category = "Hotbar")
 	//void RefreshHotbar();
@@ -56,4 +56,8 @@ protected:
 
 	UFUNCTION()
 	void OnHotbarSlotSelected(int32 SlotIndex);
+
+private:
+
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 };

@@ -7,38 +7,25 @@
 #include "HotbarWidget.h"
 #include "InventoryGridWidget.h"
 
-void APlayerHUD::CreateMainInventoryWidget(UInventoryComponent* InventoryComponent)
+void APlayerHUD::CreateMainInventoryWidget(UInventoryComponent* InventoryComponent, UHotbarComponent* HotbarComponent)
 {
 	if (MainInventoryWidgetClass)
 	{
 		MainInventoryWidget = CreateWidget<UMainInventoryWidget>(GetWorld(), MainInventoryWidgetClass);
 		MainInventoryWidget->AddToViewport();
-		MainInventoryWidget->InitializeWidget(InventoryComponent);
+		MainInventoryWidget->InitializeWidget(InventoryComponent, HotbarComponent);
 	}
 }
 
-// NEED TO BE CHANGED ITS A LITTLE WEIRD LOOP THERE FROM FUNCTION ABOVE
-UInventoryGridWidget* APlayerHUD::CreateInventoryGridWidget(UInventoryComponent* InventoryComponent)
-{
-	//if (InventoryGridClass)
-	//{
-	//	InventoryGridWidget = CreateWidget<UInventoryGridWidget>(GetWorld(), InventoryGridClass);
-	//	InventoryGridWidget->AddToViewport();
-	//	InventoryGridWidget->InitializeWidget(InventoryComponent);
-	//	return InventoryGridWidget;
-	//}
-	return nullptr;
-}
-
-void APlayerHUD::CreateHotbarWidget(UHotbarComponent* HotbarComponent)
-{
-	if (HotbarWidgetClass)
-	{
-		HotbarWidget = CreateWidget<UHotbarWidget>(GetWorld(), HotbarWidgetClass);
-		HotbarWidget->AddToViewport();
-		HotbarWidget->InitializeWidget(HotbarComponent);
-	}
-}
+//void APlayerHUD::CreateHotbarWidget(UHotbarComponent* HotbarComponent)
+//{
+//	if (HotbarWidgetClass)
+//	{
+//		HotbarWidget = CreateWidget<UHotbarWidget>(GetWorld(), HotbarWidgetClass);
+//		HotbarWidget->AddToViewport();
+//		HotbarWidget->InitializeWidget(HotbarComponent);
+//	}
+//}
 
 void APlayerHUD::CreatePlayerWidget()
 {

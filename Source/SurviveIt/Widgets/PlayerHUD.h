@@ -20,17 +20,16 @@ class SURVIVEIT_API APlayerHUD : public AHUD
 	GENERATED_BODY()
 
 public:
-	void CreateMainInventoryWidget(UInventoryComponent* Owner);
-	UInventoryGridWidget* CreateInventoryGridWidget(UInventoryComponent* Owner);
+	void CreateMainInventoryWidget(UInventoryComponent* InventoryComp, UHotbarComponent* HotbarComp);
 
-	void CreateHotbarWidget(UHotbarComponent* Owner);
+	//void CreateHotbarWidget(UHotbarComponent* Owner);
 	void CreatePlayerWidget();
 
 	//bool ToogleInventory();
 	bool ToogleMainInventoryWidget();
 	bool ToogleInventoryGridWidget();
 
-	UMainInventoryWidget* GetInventoryWidget() { return MainInventoryWidget; }
+	UMainInventoryWidget* GetMainInventoryWidget() { return MainInventoryWidget; }
 
 private:
 

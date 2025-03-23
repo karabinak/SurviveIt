@@ -11,10 +11,11 @@
 #include "SurviveIt/Components/HotbarComponent.h"
 #include "InventorySlotWidget.h"
 
-void UHotbarWidget::InitializeWidget(UHotbarComponent* InHotbarComponent)
+void UHotbarWidget::InitializeWidget(UHotbarComponent* InHotbarComponent, float PanelSize)
 {
 	if (!InHotbarComponent) return;
 	HotbarComponent = InHotbarComponent;
+	TileSize = PanelSize / HotbarComponent->NumSlots;
 
 	FTimerHandle TimerHandle; // Delayed function by 0.1s
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UHotbarWidget::DelayedInitialize, 0.1f, false);
@@ -37,7 +38,6 @@ void UHotbarWidget::DelayedInitialize()
 		float GridSizeX = HotbarComponent->NumSlots * TileSize;
 		float GridSizeY = TileSize;
 		CanvasPanelSlot->SetSize(FVector2D(GridSizeX, GridSizeY));
-		SetVisibility(ESlateVisibility::Hidden);
 	}
 
 	CreateEmptySlots();
@@ -68,7 +68,7 @@ void UHotbarWidget::CreateEmptySlots()
 	{
 		if (UInventorySlotWidget* SlotWidget = CreateWidget<UInventorySlotWidget>(this, HotbarSlotItem))
 		{
-			SlotWidget->SetSlotData(Size, 0, nullptr, TileSize);
+			SlotWidget->SetSlotData(Size, 0, nullptr, TileSize, UInventoryType::UIT_Hotbar);
 			SlotWidget->bHotbarItem = true;
 
 			UCanvasPanelSlot* CanvasSlot = HotbarCanvas->AddChildToCanvas(SlotWidget);
@@ -87,7 +87,7 @@ void UHotbarWidget::OnHotbarSlotChanged(int32 SlotIndex)
 	UBaseItem* Item = HotbarComponent->GetItemFromSlot(SlotIndex);
 	UInventorySlotWidget* SlotWidget = HotbarWidgets[SlotIndex];
 
-	SlotWidget->SetSlotData(SlotIndex, 0, Item, TileSize);
+	SlotWidget->SetSlotData(SlotIndex, 0, Item, TileSize, UInventoryType::UIT_Hotbar);
 
 	if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(SlotWidget->Slot))
 	{
@@ -117,4 +117,18 @@ void UHotbarWidget::OnHotbarSlotSelected(int32 SlotIndex)
 			Border->SetBrushColor(FLinearColor(1.0f, 0.8f, 0.0f, 0.7f));
 		}
 	}
+}
+
+bool UHotbarWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Dropped On Hotbar"));
+	//UInventoryDragDropOperation* DragDrop = Cast<UInventoryDragDropOperation>(InOperation);
+	//if (!DragDrop || !DragDrop->SourceItem) return false;
+
+	//APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	//if (PlayerCharacter)
+	//{
+	//	return PlayerCharacter->DropItemFromInventory(DragDrop->SourceItem);
+	//}
+	return false;
 }

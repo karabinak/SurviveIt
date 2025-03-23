@@ -46,7 +46,7 @@ void UInventoryGridWidget::CreateEmptySlots()
 		{
 			if (UInventorySlotWidget* SlotWidget = CreateWidget<UInventorySlotWidget>(this, InventorySlotItem))
 			{
-				SlotWidget->SetSlotData(Column, Row, nullptr, TileSize);
+				SlotWidget->SetSlotData(Column, Row, nullptr, TileSize, UInventoryType::UIT_Inventory);
 
 				UCanvasPanelSlot* CanvasSlot = InventoryCanvas->AddChildToCanvas(SlotWidget);
 				CanvasSlot->SetSize(FVector2D(TileSize));
@@ -77,7 +77,7 @@ void UInventoryGridWidget::OnItemAdded(UBaseItem* Item, FIntPoint SlotPosition)
 	UInventorySlotWidget* SlotWidget = FindSlotWidgetAt(SlotPosition.X, SlotPosition.Y);
 	if (!SlotWidget) return;
 
-	SlotWidget->SetSlotData(SlotPosition.X, SlotPosition.Y, Item, TileSize);
+	SlotWidget->SetSlotData(SlotPosition.X, SlotPosition.Y, Item, TileSize, UInventoryType::UIT_Inventory);
 
 	if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(SlotWidget->Slot))
 	{
@@ -117,7 +117,7 @@ void UInventoryGridWidget::OnItemMoved(UBaseItem* Item, FIntPoint NewPosition)
 	}
 
 	if (!OldSlot) return;
-	OldSlot->SetSlotData(OldPosition.X, OldPosition.Y, nullptr, TileSize); // Reset the old root slot
+	OldSlot->SetSlotData(OldPosition.X, OldPosition.Y, nullptr, TileSize, UInventoryType::UIT_Inventory); // Reset the old root slot
 
 	OnItemAdded(Item, NewPosition);
 }
@@ -140,7 +140,7 @@ void UInventoryGridWidget::OnItemRemoved(UBaseItem* Item)
 	}
 
 	if (!SlotWidget) return;
-	SlotWidget->SetSlotData(ItemPosition.X, ItemPosition.Y, nullptr, TileSize);
+	SlotWidget->SetSlotData(ItemPosition.X, ItemPosition.Y, nullptr, TileSize, UInventoryType::UIT_Inventory);
 }
 
 bool UInventoryGridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
@@ -157,26 +157,3 @@ bool UInventoryGridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDrag
 	return false;
 }
 
-//bool UInventoryGridWidget::ToggleInventory()
-//{
-//	if (GetVisibility() == ESlateVisibility::Visible)
-//	{
-//		HideInventory();
-//		return false;
-//	}
-//	else
-//	{
-//		ShowInventory();
-//		return true;
-//	}
-//}
-//
-//void UInventoryGridWidget::ShowInventory()
-//{
-//	SetVisibility(ESlateVisibility::Visible);
-//}
-//
-//void UInventoryGridWidget::HideInventory()
-//{
-//	SetVisibility(ESlateVisibility::Hidden);
-//}

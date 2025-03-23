@@ -12,6 +12,8 @@ class UBorder;
 class UHorizontalBox;
 class UInventoryComponent;
 class UInventoryGridWidget;
+class UHotbarComponent;
+class UHotbarWidget;
 
 UCLASS()
 class SURVIVEIT_API UMainInventoryWidget : public UUserWidget
@@ -21,7 +23,7 @@ class SURVIVEIT_API UMainInventoryWidget : public UUserWidget
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void InitializeWidget(class UInventoryComponent* InInventoryComponent);
+	void InitializeWidget(UInventoryComponent* InInventoryComponent, UHotbarComponent* InHotbarComponent);
 
 
 protected:
@@ -32,16 +34,28 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCanvasPanel> InventoryGrid;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UCanvasPanel> HotbarCanvas;
+
 	UPROPERTY()
 	TObjectPtr<UInventoryGridWidget> InventoryGridWidget = nullptr;
+
+	UPROPERTY()
+	TObjectPtr<UHotbarWidget> HotbarWidget = nullptr;
 
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TSubclassOf<UInventoryGridWidget> InventoryGridClass;
 
+	UPROPERTY(EditAnywhere, Category = "Hotbar")
+	TSubclassOf<UHotbarWidget> HotbarClass;
+
 	UPROPERTY()
 	TObjectPtr<UInventoryComponent> InventoryComponent;
+
+	UPROPERTY()
+	TObjectPtr<UHotbarComponent> HotbarComponent;
 
 
 	/** Variables */
@@ -57,8 +71,8 @@ private:
 //	UPROPERTY(meta = (BindWidget))
 //	UCanvasPanel* MainFunctionalSection;
 //
-//private:
-//
-//	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+private:
+
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
 };

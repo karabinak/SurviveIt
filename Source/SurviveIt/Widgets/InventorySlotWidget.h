@@ -13,6 +13,14 @@ class USizeBox;
 //class UBorder;
 class UTextBlock;
 
+UENUM(BlueprintType)
+enum class UInventoryType : uint8
+{
+	UIT_Inventory UMETA(DisplayName = "Inventory"),
+	UIT_Hotbar UMETA(DisplayName = "Hotbar"),
+	UIT_OtherInventory UMETA(DisplayName = "OtherInventory")
+};
+
 UCLASS()
 class SURVIVEIT_API UInventorySlotWidget : public UUserWidget
 {
@@ -24,7 +32,7 @@ public:
 	bool bHotbarItem = false;
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void SetSlotData(int32 InColumn, int32 InRow, UBaseItem* InItem, float InTileSize);
+	void SetSlotData(int32 InColumn, int32 InRow, UBaseItem* InItem, float InTileSize, UInventoryType InInventoryType);
 
 	UFUNCTION(BlueprintPure, Category = "Inventory")
 	void GetSlotPosition(int32& OutColumn, int32& OutRow) const;
@@ -34,6 +42,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void SetQuantityText(int32 InQuantity);
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void SetDragVisualSize(float ItemSize);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
@@ -48,8 +59,8 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
 	UBaseItem* Item;
 
-	//UPROPERTY(meta = (BindWidget))
-	//USizeBox* SlotSizeBox;
+	UPROPERTY(meta = (BindWidget))
+	USizeBox* SlotSizeBoxDrag;
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* BackgroundImage;
@@ -59,6 +70,9 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* QuantityText;
+
+	UPROPERTY()
+	UInventoryType InventoryType;
 
 	// Drag and Drop
 

@@ -2,13 +2,17 @@
 
 
 #include "HotbarComponent.h"
+
+#include "Kismet/GameplayStatics.h"
+
+#include "SurviveIt/Widgets/PlayerHUD.h"
 #include "SurviveIt/Items/BaseItem.h"
 
 UHotbarComponent::UHotbarComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	NumSlots = 5;
+	NumSlots = 7;
 	SelectedSlot = 0;
 }
 
@@ -28,6 +32,12 @@ void UHotbarComponent::Initialize()
 	{
 		HotbarItems[i] = nullptr;
 	}
+
+	//APlayerHUD* HUD = Cast<APlayerHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	//if (HUD)
+	//{
+	//	HUD->CreateHotbarWidget(this);
+	//}
 
 	//APlayerHUD* HUD = Cast<APlayerHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 	//if (HUD)
@@ -112,4 +122,26 @@ void UHotbarComponent::ClearHotbar()
 		HotbarItems[i] = nullptr;
 		OnHotbarSlotChanged.Broadcast(i);
 	}
+}
+
+bool UHotbarComponent::SwapHotbarSlots(int32 SourceSlot, int32 TargetSlot)
+{
+	if (SourceSlot < 0 || SourceSlot >= NumSlots || 
+		TargetSlot < 0 || TargetSlot >= NumSlots || 
+		SourceSlot == TargetSlot) return false;
+
+	UBaseItem* SourceItem = GetItemFromSlot(SourceSlot);
+	UBaseItem* TargetItem = GetItemFromSlot(TargetSlot);
+
+	bool Result = SetItemInSlot(TargetSlot, SourceItem);
+	if (Result && TargetItem)
+	{
+		Result = SetItemInSlot(SourceSlot, TargetItem);
+	}
+	else if (Result)
+	{
+		RemoveItemFromSlot(SourceSlot);
+	}
+
+	return Result;
 }

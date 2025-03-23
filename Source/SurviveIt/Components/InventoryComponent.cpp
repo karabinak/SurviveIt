@@ -4,6 +4,7 @@
 
 #include "SurviveIt/Items/BaseItem.h"
 #include "SurviveIt/Widgets/PlayerHUD.h"
+#include "SurviveIt/Character/PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
 UInventoryComponent::UInventoryComponent()
@@ -32,7 +33,7 @@ bool UInventoryComponent::AddItemAt(UBaseItem* Item, int32 Column, int32 Row)
 {
 	if (!Item || Item->IsEmpty() || !AreItemSlotsEmpty(Item, Column, Row)) return false;
 
-	SetItemSlots(Item, Column, Row);
+	SetItemSlot(Item, Column, Row);
 	//OnInventoryChanged.Broadcast();
 	OnItemAdded.Broadcast(Item, FIntPoint(Column, Row));
 
@@ -104,21 +105,48 @@ UBaseItem* UInventoryComponent::GetItemAt(int32 Column, int32 Row) const
 
 bool UInventoryComponent::MoveItem(int32 FromColumn, int32 FromRow, int32 ToColumn, int32 ToRow)
 {
-	UBaseItem* Item = GetItemAt(FromColumn, FromRow);
-	if (!Item) return false;
+	UBaseItem* SourceItem = GetItemAt(FromColumn, FromRow);
+	UBaseItem* DestinationItem = GetItemAt(ToColumn, ToRow);
 
-	ClearItemSlots(Item);
+	if (!SourceItem) return false;
 
-	if (!AreItemSlotsEmpty(Item, ToColumn, ToRow))
+	if (!DestinationItem) /**  */
 	{
-		SetItemSlots(Item, FromColumn, FromRow);
-		return false;
+		if (!AreItemSlotsEmpty(SourceItem, ToColumn, ToRow))
+		{
+			SetItemSlot(SourceItem, FromColumn, FromRow);
+			return false;
+		}
+		SetItemSlot(SourceItem, ToColumn, ToRow);
+		OnItemMoved.Broadcast(SourceItem, FIntPoint(ToColumn, ToRow));
+		return true;
 	}
+	else
+	{
+		ClearItemSlots(DestinationItem);
 
-	SetItemSlots(Item, ToColumn, ToRow);
-	OnItemMoved.Broadcast(Item, FIntPoint(ToColumn, ToRow));
+		if (!AreItemSlotsEmpty(SourceItem, ToColumn, ToRow))
+		{
+			SetItemSlot(SourceItem, FromColumn, FromRow);
+			SetItemSlot(DestinationItem, ToColumn, ToRow);
+			return false;
+		}
 
-	return true;
+		if (!AreItemSlotsEmpty(DestinationItem, FromColumn, FromRow))
+		{
+			SetItemSlot(SourceItem, FromColumn, FromRow);
+			SetItemSlot(DestinationItem, ToColumn, ToRow);
+			return false;
+		}
+
+		SetItemSlot(SourceItem, FromColumn, FromRow);
+		SetItemSlot(DestinationItem, ToColumn, ToRow);
+
+		OnItemMoved.Broadcast(SourceItem, FIntPoint(ToColumn, ToRow));
+		OnItemMoved.Broadcast(DestinationItem, FIntPoint(FromColumn, FromRow));
+
+		return true;
+	}
 }
 
 TArray<UBaseItem*> UInventoryComponent::GetAllItems() const
@@ -188,9 +216,10 @@ void UInventoryComponent::Initialize()
 	}
 
 	APlayerHUD* HUD = Cast<APlayerHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
-	if (HUD)
+	APlayerCharacter* PC = Cast<APlayerCharacter>(GetOwner());
+	if (HUD && PC)
 	{
-		HUD->CreateMainInventoryWidget(this);
+		HUD->CreateMainInventoryWidget(this, PC->GetHotbarComponent());
 	}
 }
 
@@ -206,7 +235,7 @@ int32 UInventoryComponent::GetSlotIndex(int32 Column, int32 Row) const
 	return Row * InventoryWidth + Column;
 }
 
-void UInventoryComponent::SetItemSlots(UBaseItem* Item, int32 Column, int32 Row)
+void UInventoryComponent::SetItemSlot(UBaseItem* Item, int32 Column, int32 Row)
 {
 	if (!Item || !Item->GetItemData()) return;
 

@@ -59,6 +59,9 @@ public:
 
 	void ClearHotbar();
 
+	UFUNCTION()
+	bool SwapHotbarSlots(int32 SourceSlot, int32 TargetSlot);
+
 protected:
 	UPROPERTY()
 	TArray<UBaseItem*> HotbarItems;
