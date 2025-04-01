@@ -65,6 +65,9 @@ protected:
 	UFUNCTION()
 	void OnItemRemoved(UBaseItem* Item);
 
+	UFUNCTION()
+	void OnItemSwitch(UBaseItem* FirstItem, UBaseItem* SecondItem);
+
 	void CreateEmptySlots();
 
 	UInventorySlotWidget* FindSlotWidgetAt(int32 Column, int32 Row) const;

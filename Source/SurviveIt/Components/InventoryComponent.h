@@ -14,6 +14,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemoved, UBaseItem*, Item);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuantityChanged, UBaseItem*, Item);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemAdded, UBaseItem*, Item, FIntPoint, ItemPosition);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemMoved, UBaseItem*, Item, FIntPoint, NewPosition);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemSwitch, UBaseItem*, FirstItem, UBaseItem*, SecondItem);
+
 
 
 class UInventoryWidget;
@@ -61,6 +63,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Inventory")
 	FOnItemMoved OnItemMoved;
+
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	FOnItemSwitch OnItemSwitch;
 
 	UPROPERTY(BlueprintAssignable, Category = "Inventory")
 	FOnInventoryCleared OnInventoryCleared;
@@ -117,13 +122,13 @@ protected:
 
 	void Initialize();
 
-	bool AreItemSlotsEmpty(UBaseItem* Item, int32 Column, int32 Row) const;
+	bool AreItemSlotEmpty(int32 Column, int32 Row) const;
 
 	int32 GetSlotIndex(int32 Column, int32 Row) const;
 
 	void SetItemSlot(UBaseItem* Item, int32 Column, int32 Row);
 
-	void ClearItemSlots(UBaseItem* Item);
+	void ClearItemSlot(UBaseItem* Item);
 
 	bool FindFirstFitPosition(UBaseItem* Item, int32& OutColumn, int32& OutRow) const;
 

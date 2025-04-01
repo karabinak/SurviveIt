@@ -29,6 +29,7 @@ void UInventoryGridWidget::InitializeWidget(UInventoryComponent* InInventoryComp
 	InventoryComponent->OnQuantityChanged.AddDynamic(this, &UInventoryGridWidget::OnQuantityChanged);
 	InventoryComponent->OnItemMoved.AddDynamic(this, &UInventoryGridWidget::OnItemMoved);
 	InventoryComponent->OnItemRemoved.AddDynamic(this, &UInventoryGridWidget::OnItemRemoved);
+	InventoryComponent->OnItemSwitch.AddDynamic(this, &UInventoryGridWidget::OnItemSwitch);
 
 	//InventoryComponent->OnInventoryCleared.AddDynamic(this, &UInventoryGridWidget::OnInventoryCleared);
 
@@ -141,6 +142,36 @@ void UInventoryGridWidget::OnItemRemoved(UBaseItem* Item)
 
 	if (!SlotWidget) return;
 	SlotWidget->SetSlotData(ItemPosition.X, ItemPosition.Y, nullptr, TileSize, UInventoryType::UIT_Inventory);
+}
+
+void UInventoryGridWidget::OnItemSwitch(UBaseItem* FirstItem, UBaseItem* SecondItem)
+{
+	if (!FirstItem || !SecondItem) return;
+
+	FIntPoint FirstOldPosition{ 0 };
+	FIntPoint SecondOldPosition{ 0 };
+	UInventorySlotWidget* FirstItemWidget = nullptr;
+	UInventorySlotWidget* SecondItemWidget = nullptr;
+
+	for (const TPair<FIntPoint, UInventorySlotWidget*>& Pair : SlotWidgets)
+	{
+		if (Pair.Value->GetItem() == FirstItem)
+		{
+			FirstItemWidget = Pair.Value;
+			FirstOldPosition = Pair.Key;
+		}
+
+		if (Pair.Value->GetItem() == SecondItem)
+		{
+			SecondItemWidget = Pair.Value;
+			SecondOldPosition = Pair.Key;
+		}
+
+		if (FirstItemWidget && SecondItemWidget) break;
+	}
+
+	FirstItemWidget->SetSlotData(SecondOldPosition.X, SecondOldPosition.Y, SecondItem, TileSize, UInventoryType::UIT_Inventory);
+	SecondItemWidget->SetSlotData(FirstOldPosition.X, FirstOldPosition.Y, FirstItem, TileSize, UInventoryType::UIT_Inventory);
 }
 
 bool UInventoryGridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)

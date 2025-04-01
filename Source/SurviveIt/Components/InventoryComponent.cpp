@@ -20,18 +20,9 @@ bool UInventoryComponent::IsValidPosition(int32 Column, int32 Row) const
 	return Column >= 0 && Column < InventoryWidth && Row >= 0 && Row < InventoryHeight;
 }
 
-//bool UInventoryComponent::CanItemFitAt(UBaseItem* Item, int32 Column, int32 Row) const
-//{
-//	if (!Item || !Item->GetItemData()) return false;
-//
-//	if (Column < 0 || Row < 0 || Column > InventoryWidth || Row > InventoryHeight) return false;
-//
-//	return AreItemSlotsEmpty(Item, Column, Row);
-//}
-
 bool UInventoryComponent::AddItemAt(UBaseItem* Item, int32 Column, int32 Row)
 {
-	if (!Item || Item->IsEmpty() || !AreItemSlotsEmpty(Item, Column, Row)) return false;
+	if (!Item || Item->IsEmpty() /*|| !AreItemSlotsEmpty(Item, Column, Row)*/) return false;
 
 	SetItemSlot(Item, Column, Row);
 	//OnInventoryChanged.Broadcast();
@@ -88,7 +79,7 @@ UBaseItem* UInventoryComponent::RemoveItemAt(int32 Column, int32 Row)
 	UBaseItem* Item = GetItemAt(Column, Row);
 	if (Item)
 	{
-		ClearItemSlots(Item);
+		ClearItemSlot(Item);
 		OnItemRemoved.Broadcast(Item);
 	}
 
@@ -110,40 +101,27 @@ bool UInventoryComponent::MoveItem(int32 FromColumn, int32 FromRow, int32 ToColu
 
 	if (!SourceItem) return false;
 
-	if (!DestinationItem) /**  */
+	if (!DestinationItem) /** Destination Slot is Empty  */
 	{
-		if (!AreItemSlotsEmpty(SourceItem, ToColumn, ToRow))
-		{
-			SetItemSlot(SourceItem, FromColumn, FromRow);
-			return false;
-		}
+		
+		ClearItemSlot(SourceItem);
 		SetItemSlot(SourceItem, ToColumn, ToRow);
+
 		OnItemMoved.Broadcast(SourceItem, FIntPoint(ToColumn, ToRow));
+		UE_LOG(LogTemp, Warning, TEXT("Move"));
 		return true;
 	}
-	else
+	else /** Destination Slot is Occupied  */
 	{
-		ClearItemSlots(DestinationItem);
+		ClearItemSlot(SourceItem);
+		ClearItemSlot(DestinationItem);
 
-		if (!AreItemSlotsEmpty(SourceItem, ToColumn, ToRow))
-		{
-			SetItemSlot(SourceItem, FromColumn, FromRow);
-			SetItemSlot(DestinationItem, ToColumn, ToRow);
-			return false;
-		}
+		SetItemSlot(SourceItem, ToColumn, ToRow);
+		SetItemSlot(DestinationItem, FromColumn, FromRow);
 
-		if (!AreItemSlotsEmpty(DestinationItem, FromColumn, FromRow))
-		{
-			SetItemSlot(SourceItem, FromColumn, FromRow);
-			SetItemSlot(DestinationItem, ToColumn, ToRow);
-			return false;
-		}
+		OnItemSwitch.Broadcast(SourceItem, DestinationItem);
 
-		SetItemSlot(SourceItem, FromColumn, FromRow);
-		SetItemSlot(DestinationItem, ToColumn, ToRow);
-
-		OnItemMoved.Broadcast(SourceItem, FIntPoint(ToColumn, ToRow));
-		OnItemMoved.Broadcast(DestinationItem, FIntPoint(FromColumn, FromRow));
+		UE_LOG(LogTemp, Warning, TEXT("Switch"));
 
 		return true;
 	}
@@ -223,11 +201,10 @@ void UInventoryComponent::Initialize()
 	}
 }
 
-bool UInventoryComponent::AreItemSlotsEmpty(UBaseItem* Item, int32 Column, int32 Row) const
+bool UInventoryComponent::AreItemSlotEmpty(int32 Column, int32 Row) const
 {
-	if (!IsValidPosition(Column, Row) || GetItemAt(Column, Row) != nullptr) return false;
-
-	return true;
+	if (GetItemAt(Column, Row) == nullptr) return true;
+	return false;
 }
 
 int32 UInventoryComponent::GetSlotIndex(int32 Column, int32 Row) const
@@ -246,7 +223,7 @@ void UInventoryComponent::SetItemSlot(UBaseItem* Item, int32 Column, int32 Row)
 	}
 }
 
-void UInventoryComponent::ClearItemSlots(UBaseItem* Item)
+void UInventoryComponent::ClearItemSlot(UBaseItem* Item)
 {
 	if (!Item) return;
 
@@ -255,6 +232,7 @@ void UInventoryComponent::ClearItemSlots(UBaseItem* Item)
 		if (Slot.Item == Item)
 		{
 			Slot.Item = nullptr;
+			return;
 		}
 	}
 }
@@ -267,7 +245,7 @@ bool UInventoryComponent::FindFirstFitPosition(UBaseItem* Item, int32& OutColumn
 	{
 		for (int32 Row = 0; Row < InventoryHeight; Row++)
 		{
-			if (AreItemSlotsEmpty(Item, Column, Row))
+			if (AreItemSlotEmpty(Column, Row))
 			{
 				OutColumn = Column;
 				OutRow = Row;
